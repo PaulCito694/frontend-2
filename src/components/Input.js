@@ -1,7 +1,14 @@
 import React from 'react'
 import { TextField } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { useField } from 'react-final-form'
 import clsx from 'clsx'
+
+const useStyles = makeStyles({
+  customInput: {
+    padding: '4px !important',
+  },
+})
 
 const TextFieldField = ({
   name,
@@ -11,10 +18,12 @@ const TextFieldField = ({
   validate,
   ...props
 }) => {
+  const classes = useStyles()
   const {
     input,
     meta: { error, touched },
   } = useField(name, { validate })
+
   return (
     <div className={clsx('grid', parentClassName)}>
       {label && (
@@ -26,7 +35,12 @@ const TextFieldField = ({
         </label>
       )}
       <TextField
-        className={clsx('border border-solid border-black', className)}
+        className={clsx('border border-solid border-black p-0', className)}
+        InputProps={{
+          classes: {
+            input: classes.customInput,
+          },
+        }}
         {...input}
         {...props}
       />

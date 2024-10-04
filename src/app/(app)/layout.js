@@ -10,7 +10,6 @@ const AppLayout = ({ children }) => {
   /*if (!user) {
     return <Loading />
   }*/
-  console.debug(';;ega')
 
   return (
     <div className="min-h-screen bg-gray-100">
