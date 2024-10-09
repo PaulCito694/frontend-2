@@ -8,12 +8,8 @@ import Input from '@/components/Input'
 import Header from '@/app/(app)/Header'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 
-require('../echo')
-
 const Page = () => {
   const { productList, createProduct } = useProduct()
-
-  console.log(productList)
 
   return (
     <div>
