@@ -12,7 +12,6 @@ require('../echo')
 
 const Page = () => {
   const { channelList, isLoading, handleCreateChannel } = useRooms()
-  console.debug(channelList, isLoading)
 
   if (isLoading) return <div>Cargando prro...</div>
 

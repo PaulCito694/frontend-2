@@ -1,15 +1,21 @@
 import axios from '@/lib/axios'
+import useSWRMutation from 'swr/mutation'
 import useSWR from 'swr'
 
-const getSaleList = url => axios.get(url).then(res => res.data)
+const getSaleList = (url, { arg }) =>
+  axios.get(`${url}?${arg}`).then(res => res.data)
 
 const useProducts = () => {
-  const { data: saleList, isLoading, mutate } = useSWR('api/sales', getSaleList)
+  const { data: saleList, isMutating, trigger } = useSWRMutation(
+    'api/sales',
+    getSaleList,
+  )
+  console.debug('entra')
 
   const createSale = async data => {
     try {
       await axios.post('api/sales', data)
-      mutate()
+      trigger()
     } catch (error) {
       console.error('Error al agregar el producto:', error)
     }
@@ -20,8 +26,9 @@ const useProducts = () => {
   return {
     getProductById,
     saleList,
-    isLoading,
+    isMutating,
     createSale,
+    trigger,
   }
 }
 

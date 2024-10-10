@@ -1,20 +1,25 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Header from '@/app/(app)/Header'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import useSales from '@/hooks/useSales'
 import jsPDF from 'jspdf'
 import PictureAsPdf from '@mui/icons-material/PictureAsPdf'
+import ReceiptIcon from '@mui/icons-material/Receipt'
+import { numberToLetters } from '@/utils/number_to_letters'
 
 const Page = () => {
-  const { saleList, isLoading } = useSales()
+  const { saleList, isLoading, trigger } = useSales()
   const [hoveredRow, setHoveredRow] = React.useState(null)
-  const doc = new jsPDF()
 
   if (isLoading) return <div>Cargando prro...</div>
+  useEffect(() => {
+    trigger()
+  }, [])
 
-  const handleClick = sale => {
+  const generateInvoicePDF = sale => {
+    const doc = new jsPDF()
     let paddingTop = 16
     let paddingDif = 6
     doc.setFontSize(14)
@@ -35,7 +40,6 @@ const Page = () => {
     doc.addImage('../logo-qhalifarma.png', 'PNG', 8, 8, 46, 46)
     doc.setFontSize(9)
     const docWidth = doc.internal.pageSize.getWidth()
-    const docHeight = doc.internal.pageSize.getHeight()
     doc.line(150, 54, docWidth - 10, 54)
     doc.line(150, 8, docWidth - 10, 8) //vertical izquierda
     doc.line(150, 54, 150, 8)
@@ -87,7 +91,6 @@ const Page = () => {
     doc.text('Lote', 145, 110)
     doc.text('P.U.', 165, 110)
     doc.text('IMPORTE', 182, 110)
-    let startSaleDetailX = 14
     let startSaleDetailY = 118
     let partialY = 0
     const YDif = 6
@@ -149,6 +152,71 @@ const Page = () => {
     //doc.save('two-by-four.pdf')
   }
 
+  const generateInvoiceTicket = sale => {
+    const totalHeight = 140 + sale.sale_details.length * 5
+    const doc = new jsPDF({
+      orientation: 'p',
+      unit: 'mm',
+      format: [80, totalHeight],
+    })
+    doc.setFontSize(8)
+    doc.text('SERVICIOS QHALIFARMA S.C.R.L', 40, 5, { align: 'center' })
+    doc.setFont('helvetica', 'normal')
+    doc.text('AV. ANTONIO RAIMONDI NRO. 864 HUANUCO', 40, 10, {
+      align: 'center',
+    })
+    doc.text('LEONCIO PRADO - RUPA-RUPA', 40, 15, { align: 'center' })
+    doc.setFontSize(7)
+    doc.text('Telf.: 987045222', 40, 20, { align: 'center' })
+    doc.text('Boticasqfsrl@gmail.com', 40, 25, { align: 'center' })
+    doc.line(2, 27, 78, 27, 'DF')
+
+    doc.setFontSize(8)
+    doc.text('BOLETA ELECTRÓNICA', 40, 30, { align: 'center' })
+    doc.text(sale.invoice?.toString() || '', 40, 35, { align: 'center' })
+    doc.text(`Fecha de Emisión: ${sale.date}`, 2, 40)
+    doc.text(`Señor (es): ${sale.date}`, 2, 45)
+    doc.text(`D.N.I.: ${sale.date}`, 2, 50)
+    doc.text(`Direc.: ${sale.customer?.address || '-'}`, 2, 55)
+    doc.text(`Forma de Pago: Contado`, 2, 60)
+    doc.line(2, 62, 78, 62, 'DF')
+    doc.text(`Cant.`, 2, 65)
+    doc.text(`Descripción`, 10, 65)
+    doc.text(`P.U.`, 58, 65)
+    doc.text(`Importe`, 68, 65)
+    doc.line(2, 67, 78, 67, 'DF')
+    let startSaleDetailY = 70
+    let partialY = 0
+    const YDif = 4
+    sale.sale_details.map((sale_detail, index) => {
+      partialY = startSaleDetailY + index * YDif
+      doc.text(sale_detail.quantity?.toString() || ' - ', 2, partialY)
+      doc.text(sale_detail.product.name?.toString() || ' - ', 10, partialY)
+      doc.text(sale_detail.price?.toString() || ' - ', 58, partialY)
+      doc.text(sale_detail.sub_total?.toString() || ' - ', 68, partialY)
+    })
+    doc.line(2, partialY + 2, 78, partialY + 2)
+    doc.setFontSize(9)
+    doc.text(`Exonerado:`, 61, partialY + 5, { align: 'right' })
+    doc.text(`Total a Pagar:`, 61, partialY + 10, { align: 'right' })
+    doc.text(`Recibido:`, 61, partialY + 15, { align: 'right' })
+    doc.text(`Vuelto:`, 61, partialY + 20, { align: 'right' })
+    doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 5)
+    doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 10)
+    doc.text(
+      `S/. ${sale.received_amount?.toString() || '-'}`,
+      64,
+      partialY + 15,
+    )
+    doc.text(`S/. ${sale.change_amount?.toString() || '-'}`, 64, partialY + 20)
+    doc.line(2, partialY + 22, 78, partialY + 22)
+    doc.setFontSize(7)
+    doc.text(numberToLetters(sale.total)?.toString(), 2, partialY + 25)
+    doc.addImage('../qr.png', 'PNG', 20, partialY + 27, 40, 40)
+    doc.line(2, partialY + 69, 78, partialY + 69)
+    doc.output('pdfobjectnewwindow')
+  }
+
   return (
     <>
       <Header title="Scrum poker" />
@@ -164,10 +232,11 @@ const Page = () => {
                     <TableCell>Cliente</TableCell>
                     <TableCell>Total</TableCell>
                     <TableCell>PDF</TableCell>
+                    <TableCell>Ticket</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {saleList.map((sale, index) => (
+                  {saleList?.map((sale, index) => (
                     <TableRow
                       className={hoveredRow === index && 'bg-amber-400'}
                       onMouseEnter={() => setHoveredRow(index)}
@@ -186,7 +255,13 @@ const Page = () => {
                       <TableCell>S/. {sale.total}</TableCell>
                       <TableCell>
                         <PictureAsPdf
-                          onClick={() => handleClick(sale)}
+                          onClick={() => generateInvoicePDF(sale)}
+                          className="cursor-pointer"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <ReceiptIcon
+                          onClick={() => generateInvoiceTicket(sale)}
                           className="cursor-pointer"
                         />
                       </TableCell>
