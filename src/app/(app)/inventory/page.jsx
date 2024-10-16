@@ -60,7 +60,7 @@ const Page = () => {
                           <div>
                             <h2 className="text-2xl mb-4">Nueva venta:</h2>
                             <Card>
-                              <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
+                              {/*<div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <Input name="name" label={'Nombre'} />
                                 <Input
                                   name="description"
@@ -101,7 +101,7 @@ const Page = () => {
                                 <Button type="submit" disabled={submitting}>
                                   Guardar Venta
                                 </Button>
-                              </div>
+                              </div>*/}
                               <Table className="mb-8" size="small" border>
                                 <TableHead>
                                   <TableRow
@@ -205,10 +205,7 @@ const Page = () => {
                                 <TableHead>
                                   <TableRow>
                                     <TableCell
-                                      sx={{
-                                        width: 350,
-                                        fontWeight: 800,
-                                      }}>
+                                      sx={{ width: 350, fontWeight: 800 }}>
                                       Nombre
                                     </TableCell>
                                     <TableCell

@@ -11,7 +11,7 @@ const SelectField = ({ name, label, className, validate, data }) => {
   return (
     <div className="grid">
       <label>{label}</label>
-      <Select className={clsx('font-bold', className)} {...input}>
+      <Select className={clsx('font-bold min-w-25', className)} {...input}>
         <MenuItem value="">Seleccione una opcion</MenuItem>
         {data?.map((item, index) => (
           <MenuItem key={index} value={item?.id}>

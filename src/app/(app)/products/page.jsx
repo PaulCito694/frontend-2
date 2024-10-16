@@ -9,7 +9,9 @@ import Header from '@/app/(app)/Header'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 
 const Page = () => {
-  const { productList, createProduct } = useProduct()
+  const { productList, isLoading, createProduct } = useProduct()
+
+  if (isLoading) return <div>Cargando prro...</div>
 
   return (
     <div>
@@ -107,7 +109,7 @@ const Page = () => {
                   </form>
                 )}
               />
-              <Table className="mb-8" size="small" border>
+              <Table className="mb-8" size="small">
                 <TableHead>
                   <TableRow className="bg-blue-500" onMouseUp={() => {}}>
                     <TableCell align="center" width={8}>
@@ -122,8 +124,6 @@ const Page = () => {
                     <TableCell align="center" width={100}>
                       Precio
                     </TableCell>
-                    <TableCell align="center">Sub Total</TableCell>
-                    <TableCell align="center">Eliminar</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>

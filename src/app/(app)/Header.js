@@ -25,7 +25,7 @@ const Header = ({ title }) => {
               size="large"
               className="flex flex-col bg-cyan-300">
               <ShoppingCartIcon />
-              Nueva venta
+              Venta rapida
             </IconButton>
             <IconButton
               sx={{

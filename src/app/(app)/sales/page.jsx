@@ -2,21 +2,33 @@
 
 import React, { useEffect } from 'react'
 import Header from '@/app/(app)/Header'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from '@mui/material'
 import useSales from '@/hooks/useSales'
 import jsPDF from 'jspdf'
 import PictureAsPdf from '@mui/icons-material/PictureAsPdf'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { numberToLetters } from '@/utils/number_to_letters'
+import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
 
 const Page = () => {
-  const { saleList, isLoading, trigger } = useSales()
+  const { saleList, isMutating, trigger } = useSales()
   const [hoveredRow, setHoveredRow] = React.useState(null)
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
-  if (isLoading) return <div>Cargando prro...</div>
   useEffect(() => {
     trigger()
   }, [])
+
+  if (isMutating) return <div>Cargando prro...</div>
 
   const generateInvoicePDF = sale => {
     const doc = new jsPDF()
@@ -49,7 +61,7 @@ const Page = () => {
     doc.text('R.U.C. 20607482161', 155, 20)
     doc.text('BOLETA DE VENTA ', 155, 28)
     doc.text('ELECTRÓNICA', 155, 36)
-    doc.text('B002 - 029992', 155, 44) // TODO: cambiar a valor de backend
+    doc.text(sale.invoice.toString() || ' - ', 155, 44) // TODO: cambiar a valor de backend
 
     doc.text(`Cliente: ${sale.customer?.name || '-'}`, 8, 60)
     doc.text(`D.N.I.: ${sale.customer?.document_number || '-'}`, 8, 66)
@@ -217,6 +229,14 @@ const Page = () => {
     doc.output('pdfobjectnewwindow')
   }
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value)
+    setPage(0)
+  }
+
   return (
     <>
       <Header title="Scrum poker" />
@@ -227,47 +247,82 @@ const Page = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ minWidth: 300 }}>Fecha</TableCell>
-                    <TableCell>Comprobante</TableCell>
-                    <TableCell>Cliente</TableCell>
-                    <TableCell>Total</TableCell>
-                    <TableCell>PDF</TableCell>
-                    <TableCell>Ticket</TableCell>
+                    <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
+                      Fecha
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Cliente</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Estado de pago
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Tipo de venta
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Total</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Ticket</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {saleList?.map((sale, index) => (
-                    <TableRow
-                      className={hoveredRow === index && 'bg-amber-400'}
-                      onMouseEnter={() => setHoveredRow(index)}
-                      onMouseLeave={() => setHoveredRow(null)}
-                      key={index}
-                      sx={{
-                        '&:last-child td, &:last-child th': {
-                          border: 0,
-                        },
-                      }}>
-                      <TableCell align="left">{sale.date}</TableCell>
-                      <TableCell component="th" scope="row">
-                        {sale.invoice}
-                      </TableCell>
-                      <TableCell>{sale.customer?.document_number}</TableCell>
-                      <TableCell>S/. {sale.total}</TableCell>
-                      <TableCell>
-                        <PictureAsPdf
-                          onClick={() => generateInvoicePDF(sale)}
-                          className="cursor-pointer"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <ReceiptIcon
-                          onClick={() => generateInvoiceTicket(sale)}
-                          className="cursor-pointer"
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {saleList?.results
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage,
+                    )
+                    .map((sale, index) => (
+                      <TableRow
+                        className={hoveredRow === index && 'bg-amber-400'}
+                        onMouseEnter={() => setHoveredRow(index)}
+                        onMouseLeave={() => setHoveredRow(null)}
+                        key={index}
+                        sx={{
+                          '&:last-child td, &:last-child th': {
+                            border: 0,
+                          },
+                        }}>
+                        <TableCell align="left">{sale.date}</TableCell>
+                        <TableCell component="th" scope="row">
+                          {sale.invoice}
+                        </TableCell>
+                        <TableCell>{sale.customer?.document_number}</TableCell>
+                        <TableCell>
+                          {saleStateTransduction(sale.state)}
+                        </TableCell>
+                        <TableCell>{saleKindTransduction(sale.kind)}</TableCell>
+                        <TableCell>S/. {sale.total}</TableCell>
+                        <TableCell>
+                          <PictureAsPdf
+                            onClick={() => generateInvoicePDF(sale)}
+                            className="cursor-pointer"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <ReceiptIcon
+                            onClick={() => generateInvoiceTicket(sale)}
+                            className="cursor-pointer"
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
+                <TableFooter>
+                  <TablePagination
+                    rowsPerPageOptions={[10, 20]}
+                    count={saleList?.results?.length}
+                    onPageChange={handleChangePage}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    slotProps={{
+                      select: {
+                        inputProps: {
+                          'aria-label': 'Filas por pagina',
+                        },
+                        native: true,
+                      },
+                    }}
+                  />
+                </TableFooter>
               </Table>
             </div>
           </div>

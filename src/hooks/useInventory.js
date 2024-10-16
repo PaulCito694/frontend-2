@@ -5,9 +5,9 @@ import useSWR from 'swr'
 const getSaleList = (url, { arg }) =>
   axios.get(`${url}?${arg}`).then(res => res.data)
 
-const useProducts = () => {
+const useInventory = () => {
   const { data: saleList, isMutating, trigger } = useSWRMutation(
-    'api/sales',
+    'api/inventory',
     getSaleList,
   )
 
@@ -31,4 +31,4 @@ const useProducts = () => {
   }
 }
 
-export default useProducts
+export default useInventory
