@@ -16,13 +16,15 @@ const TextFieldField = ({
   className,
   parentClassName,
   validate,
+  initialValue,
+  onChange,
   ...props
 }) => {
   const classes = useStyles()
   const {
     input,
     meta: { error, touched },
-  } = useField(name, { validate })
+  } = useField(name, { validate, initialValue })
 
   return (
     <div className={clsx('grid', parentClassName)}>
@@ -41,6 +43,7 @@ const TextFieldField = ({
             input: classes.customInput,
           },
         }}
+        onChange={onChange && onChange(input.value)}
         {...input}
         {...props}
       />

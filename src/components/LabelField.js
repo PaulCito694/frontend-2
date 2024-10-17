@@ -1,11 +1,8 @@
-import React, { useMemo } from 'react'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import React from 'react'
 import { useField } from 'react-final-form'
 import clsx from 'clsx'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import moment from 'moment'
 
-const DatePickerField = ({
+const LabelField = ({
   name,
   label,
   className,
@@ -14,12 +11,10 @@ const DatePickerField = ({
   initialValue,
   ...props
 }) => {
-  const currentDate = useMemo(() => moment(), [])
-
   const {
     input,
     meta: { error, touched },
-  } = useField(name, { validate, initialValue: initialValue || currentDate })
+  } = useField(name, { validate, initialValue })
 
   return (
     <div className={clsx('grid', parentClassName)}>
@@ -31,12 +26,10 @@ const DatePickerField = ({
           {label}
         </label>
       )}
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <DatePicker {...input} format={'DD/MM/YYYY'} />
-      </LocalizationProvider>
+      {input.value}
       {touched && <span className="text-red-500">{error}</span>}
     </div>
   )
 }
 
-export default DatePickerField
+export default LabelField

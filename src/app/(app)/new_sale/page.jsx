@@ -102,7 +102,7 @@ const Page = () => {
                                   Guardar Venta
                                 </Button>
                               </div>
-                              <Table className="mb-8" size="small" border>
+                              <Table className="mb-8" size="small">
                                 <TableHead>
                                   <TableRow
                                     className="bg-blue-500"
@@ -117,6 +117,12 @@ const Page = () => {
                                       Laboratorio
                                     </TableCell>
                                     <TableCell align="center">U_M</TableCell>
+                                    <TableCell align="center">
+                                      Ubicacion
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      Fecha de vencimiento
+                                    </TableCell>
                                     <TableCell align="center">Stock</TableCell>
                                     <TableCell align="center">
                                       Cantidad
@@ -149,6 +155,12 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           {product.unid_med}
+                                        </TableCell>
+                                        <TableCell>
+                                          {product.location}
+                                        </TableCell>
+                                        <TableCell>
+                                          {product.expirationDate}
                                         </TableCell>
                                         <TableCell>
                                           {product.initialStok}

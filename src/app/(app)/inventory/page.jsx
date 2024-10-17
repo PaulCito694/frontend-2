@@ -4,10 +4,12 @@ import React from 'react'
 import Header from '@/app/(app)/Header'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
-import { changeMutator, clearMutator } from 'utils/mutators'
+import { changeMutator, clearArrayMutator, clearMutator } from 'utils/mutators'
 import {
+  Alert,
   Card,
   IconButton,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -18,17 +20,16 @@ import Input from '@/components/Input'
 import useProducts from '@/hooks/useProducts'
 import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays'
-import TotalField from '@/app/(app)/new_sale/components/TotalField'
-import useSales from '@/hooks/useSales'
-import { useRouter } from 'next/navigation'
 import RemoveCircle from '@mui/icons-material/RemoveCircle'
-import SelectField from '@/components/SelectField'
+import LabelField from '@/components/LabelField'
+import DatePickerField from '@/components/DatePickerField'
+import usePurchase from '@/hooks/usePurchase'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
-  const { createSale } = useSales()
+  const { createPurchase } = usePurchase()
   const [hoveredRow, setHoveredRow] = React.useState(null)
-  const router = useRouter()
+  const [snackBarMessage, setSnackBarMessage] = React.useState({})
 
   if (isLoading) return <div>Cargando prro...</div>
 
@@ -43,66 +44,74 @@ const Page = () => {
                 mutators={{
                   clear: clearMutator,
                   change: changeMutator,
+                  clearArray: clearArrayMutator,
                   ...arrayMutators,
                 }}
                 onSubmit={values => {
-                  createSale(values).then(() => router.push('/sales'))
+                  createPurchase(values)
+                    .then(() => {
+                      setSnackBarMessage({
+                        message: 'Inventario actualizado correctamente',
+                        severity: 'success',
+                        open: true,
+                      })
+
+                      setTimeout(() => window.location.reload(), 3000)
+                    })
+                    .catch(() =>
+                      setSnackBarMessage({
+                        message:
+                          'Hubo un error al actualizar el inventario, actualice la pagina e intente nuevamente',
+                        severity: 'error ',
+                        open: true,
+                      }),
+                    )
                 }}
-                initialValues={{
-                  state: 'payed',
-                  kind: 'sales_note',
-                }}
-                render={({ handleSubmit, submitting }) => (
+                render={({
+                  handleSubmit,
+                  submitting,
+                  values,
+                  form: { change, getFieldState },
+                }) => (
                   <form onSubmit={handleSubmit}>
-                    <FieldArray name="sale_details_attributes">
+                    <Snackbar
+                      open={snackBarMessage?.open}
+                      autoHideDuration={3000}
+                      onClose={() => setSnackBarMessage(null)}
+                      anchorOrigin={{ horizontal: 'right', vertical: 'top' }}>
+                      <Alert
+                        onChange={() => setSnackBarMessage(null)}
+                        severity={snackBarMessage?.severity}>
+                        {snackBarMessage?.message}
+                      </Alert>
+                    </Snackbar>
+                    <FieldArray name="purchase_details_attributes">
                       {({ fields }) => (
                         <div className="flex flex-col-2 justify-around items-start gap-4">
                           <div>
-                            <h2 className="text-2xl mb-4">Nueva venta:</h2>
+                            <h2 className="text-2xl mb-4">
+                              Ingreso/actualizacion de productos:
+                            </h2>
                             <Card>
-                              {/*<div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
-                                <Input name="name" label={'Nombre'} />
+                              <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <Input
-                                  name="description"
-                                  label={'Descripcion'}
+                                  name="document_number"
+                                  label={'Numero de documento'}
                                 />
-                                <SelectField
-                                  name="state"
-                                  label="Estado de pago"
-                                  data={[
-                                    {
-                                      id: 'payed',
-                                      name: 'Pagado',
-                                    },
-                                    {
-                                      id: 'pending_payment',
-                                      name: 'Pendiente de pago',
-                                    },
-                                  ]}
+                                <DatePickerField name="date" label={'Fecha'} />
+                                <Input
+                                  name="supplier_name"
+                                  label={'Proveedor'}
                                 />
-                                <SelectField
-                                  name="kind"
-                                  label="Tipo de venta"
-                                  data={[
-                                    {
-                                      id: 'sales_note',
-                                      name: 'Nota de venta',
-                                    },
-                                    {
-                                      id: 'receipt',
-                                      name: 'Boleta',
-                                    },
-                                    {
-                                      id: 'invoice',
-                                      name: 'Factura',
-                                    },
-                                  ]}
+                                <Input
+                                  name="supplier_document_number"
+                                  label={'RUC'}
                                 />
-                                <Button type="submit" disabled={submitting}>
-                                  Guardar Venta
+                                <Button disabled={submitting} type="submit">
+                                  Guardar Compra
                                 </Button>
-                              </div>*/}
-                              <Table className="mb-8" size="small" border>
+                              </div>
+                              <Table className="mb-8" size="small">
                                 <TableHead>
                                   <TableRow
                                     className="bg-blue-500"
@@ -117,15 +126,26 @@ const Page = () => {
                                       Laboratorio
                                     </TableCell>
                                     <TableCell align="center">U_M</TableCell>
-                                    <TableCell align="center">Stock</TableCell>
                                     <TableCell align="center">
-                                      Cantidad
+                                      Ubicacion
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      Fecha de vencimiento
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      Stock actual
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      Ingreso
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      Nuevo stock
                                     </TableCell>
                                     <TableCell align="center" width={100}>
-                                      Precio
+                                      Precio Actual
                                     </TableCell>
-                                    <TableCell align="center">
-                                      Sub Total
+                                    <TableCell align="center" width={100}>
+                                      Nuevo Precio
                                     </TableCell>
                                     <TableCell align="center">Quitar</TableCell>
                                   </TableRow>
@@ -141,7 +161,7 @@ const Page = () => {
                                           {product.composed_name}
                                           <Input
                                             parentClassName="hidden "
-                                            name={`sale_details_attributes[${index}].product_id`}
+                                            name={`purchase_details_attributes[${index}].product_id`}
                                           />
                                         </TableCell>
                                         <TableCell>
@@ -151,22 +171,60 @@ const Page = () => {
                                           {product.unid_med}
                                         </TableCell>
                                         <TableCell>
-                                          {product.initialStok}
+                                          <Input
+                                            initialValue={product.location}
+                                            name={`purchase_details_attributes[${index}].location`}
+                                          />
+                                        </TableCell>
+                                        <TableCell width={140}>
+                                          <Input
+                                            initialValue={
+                                              product.expirationDate
+                                            }
+                                            name={`purchase_details_attributes[${index}].expiration_date`}
+                                          />
                                         </TableCell>
                                         <TableCell>
-                                          <Input
-                                            name={`sale_details_attributes[${index}].quantity`}
+                                          <LabelField
+                                            name={`purchase_details_attributes[${index}].initial_stock`}
+                                            initialValue={product.initialStok}
                                           />
                                         </TableCell>
                                         <TableCell>
                                           <Input
-                                            name={`sale_details_attributes[${index}].price`}
+                                            name={`purchase_details_attributes[${index}].quantity`}
+                                            onChange={value => {
+                                              const initialStockField = getFieldState(
+                                                `purchase_details_attributes[${index}].initial_stock`,
+                                              )
+
+                                              const initialStock =
+                                                initialStockField?.value || 0
+                                              change(
+                                                `purchase_details_attributes[${index}].last_stock`,
+                                                initialStock + Number(value),
+                                              )
+                                            }}
                                           />
                                         </TableCell>
-                                        <TableCell width={100}>
+                                        <TableCell>
+                                          <LabelField
+                                            initialValue={
+                                              product.initialStok + 1
+                                            }
+                                            name={`purchase_details_attributes[${index}].last_stock`}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
+                                          <LabelField
+                                            initialValue={product.price}
+                                            name={`purchase_details_attributes[${index}].initial_price`}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
                                           <Input
-                                            disabled
-                                            name={`sale_details_attributes[${index}].sub_total`}
+                                            initialValue={product.price}
+                                            name={`purchase_details_attributes[${index}].last_price`}
                                           />
                                         </TableCell>
                                         <TableCell width={50}>
@@ -192,8 +250,8 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
-                              <TotalField />
-                              {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
+                              {/*<TotalField />*/}
+                              <pre>{JSON.stringify(values, null, 2)}</pre>
                             </Card>
                           </div>
                           <div>
