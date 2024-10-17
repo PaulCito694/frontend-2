@@ -16,7 +16,7 @@ import Button from '@/components/Button'
 import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
 
 const Page = () => {
-  const { saleList, isMutating, trigger } = useSales()
+  const { saleList, trigger } = useSales()
   const now = moment()
 
   const generateInvoiceTicket = sale => {

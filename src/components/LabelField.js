@@ -5,11 +5,9 @@ import clsx from 'clsx'
 const LabelField = ({
   name,
   label,
-  className,
   parentClassName,
   validate,
   initialValue,
-  ...props
 }) => {
   const {
     input,

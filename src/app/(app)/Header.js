@@ -9,7 +9,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale'
 import { usePathname, useRouter } from 'next/navigation'
 
-const Header = ({ title }) => {
+const Header = () => {
   const pathname = usePathname()
   const { push } = useRouter()
   return (

@@ -272,7 +272,7 @@ const Page = () => {
                                               Number(foundProduct.quantity) + 1,
                                           })
                                         } else {
-                                          const { id, ...rest } = product
+                                          const { id, ...rest } = product // eslint-disable-line no-unused-vars
                                           fields.push({
                                             quantity: 1,
                                             product_id: product.id,

@@ -8,11 +8,9 @@ import moment from 'moment'
 const DatePickerField = ({
   name,
   label,
-  className,
   parentClassName,
   validate,
   initialValue,
-  ...props
 }) => {
   const currentDate = useMemo(() => moment(), [])
 

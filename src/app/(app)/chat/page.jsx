@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from '@/lib/axios'
 import Button from '@/components/Button'
-require('../echo')
 
 const Page = () => {
   const [messages, setMessages] = useState([])
