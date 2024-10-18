@@ -112,7 +112,7 @@ const Page = () => {
               <Table className="mb-8" size="small">
                 <TableHead>
                   <TableRow className="bg-blue-500" onMouseUp={() => {}}>
-                    <TableCell align="center" width={8}>
+                    <TableCell align="center">
                       Codigo
                     </TableCell>
                     <TableCell align="center" width={400}>
@@ -214,20 +214,6 @@ const Page = () => {
                         <TableCell>{_message.multiPrice}</TableCell>
                         <TableCell>{_message.digemid}</TableCell>
                         <TableCell>{_message.batchRegister}</TableCell>
-
-                        {/*TODO: Acabar esta tabla*/}
-                        {/*{_message.name} - {_message.code} -{' '}
-                        {_message.expirationDate} - {_message.location} -
-                        {_message.weight}-{_message.brand}-{_message.labaratory}-
-                        {_message.component}-{_message.symptom}-{_message.igvType}-
-                        {_message.currency}-{_message.salePriceIncIGV}-
-                        {_message.salePriceExIGV}-{_message.unitOfMeasure}-
-                        {_message.initialStok}-{_message.minStok}-
-                        {_message.purchasePrice}-{_message.profitMax}-
-                        {_message.profitOpt}-
-                        {_message.icbper ? 'Es verdadero' : 'Es falso'}-
-                        {_message.multiPrice}-{_message.digemid}-
-                        {_message.batchRegister}*/}
                       </TableRow>
                     )
                   })}
