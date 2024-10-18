@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import axios from '@/lib/axios'
-import Button from '@/components/Button'
+import React from 'react'
+/*import axios from '@/lib/axios'
+import Button from '@/components/Button'*/
 
 const Page = () => {
-  const [messages, setMessages] = useState([])
+  /*const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [event, setEvent] = useState({})
 
@@ -50,11 +50,11 @@ const Page = () => {
       text: message,
     })
     setMessage('')
-  }
+  }*/
 
   return (
     <div>
-      {messages.map((_message, index) => {
+      {/*      {messages.map((_message, index) => {
         return <div key={index}>{_message.text}</div>
       })}
       {event}
@@ -63,7 +63,7 @@ const Page = () => {
         className="form-input"
         value={message}
       />
-      <Button onClick={handleClick}>Crear tarjeta</Button>
+      <Button onClick={handleClick}>Crear tarjeta</Button>*/}
     </div>
   )
 }

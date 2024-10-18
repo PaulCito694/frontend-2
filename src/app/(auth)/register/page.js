@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@/components/Button'
-import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
@@ -14,10 +13,10 @@ const Page = () => {
     redirectIfAuthenticated: '/dashboard',
   })
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [name] = useState('')
+  const [email] = useState('')
+  const [password] = useState('')
+  const [passwordConfirmation] = useState('')
   const [errors, setErrors] = useState([])
 
   const submitForm = event => {
@@ -38,7 +37,7 @@ const Page = () => {
       <div>
         <Label htmlFor="name">Name</Label>
 
-        <Input
+        {/*<Input
           id="name"
           type="text"
           value={name}
@@ -46,7 +45,7 @@ const Page = () => {
           onChange={event => setName(event.target.value)}
           required
           autoFocus
-        />
+        />*/}
 
         <InputError messages={errors.name} className="mt-2" />
       </div>
@@ -55,14 +54,14 @@ const Page = () => {
       <div className="mt-4">
         <Label htmlFor="email">Email</Label>
 
-        <Input
+        {/*<Input
           id="email"
           type="email"
           value={email}
           className="block mt-1 w-full"
           onChange={event => setEmail(event.target.value)}
           required
-        />
+        />*/}
 
         <InputError messages={errors.email} className="mt-2" />
       </div>
@@ -71,7 +70,7 @@ const Page = () => {
       <div className="mt-4">
         <Label htmlFor="password">Password</Label>
 
-        <Input
+        {/*<Input
           id="password"
           type="password"
           value={password}
@@ -79,7 +78,7 @@ const Page = () => {
           onChange={event => setPassword(event.target.value)}
           required
           autoComplete="new-password"
-        />
+        />*/}
 
         <InputError messages={errors.password} className="mt-2" />
       </div>
@@ -88,14 +87,14 @@ const Page = () => {
       <div className="mt-4">
         <Label htmlFor="passwordConfirmation">Confirm Password</Label>
 
-        <Input
+        {/* <Input
           id="passwordConfirmation"
           type="password"
           value={passwordConfirmation}
           className="block mt-1 w-full"
           onChange={event => setPasswordConfirmation(event.target.value)}
           required
-        />
+        />*/}
 
         <InputError messages={errors.password_confirmation} className="mt-2" />
       </div>

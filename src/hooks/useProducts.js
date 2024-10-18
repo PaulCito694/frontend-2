@@ -8,7 +8,6 @@ const useProducts = () => {
     'api/products',
     getProductList,
   )
-  console.log('*********', productList)
   const createProduct = async data => {
     try {
       await axios.post('api/products', data)

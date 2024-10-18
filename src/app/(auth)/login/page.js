@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@/components/Button'
-import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
@@ -18,9 +17,9 @@ const Login = () => {
     //redirectIfAuthenticated: '/dashboard',
   })
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [shouldRemember, setShouldRemember] = useState(false)
+  const [email] = useState('')
+  const [password] = useState('')
+  const [shouldRemember] = useState(false)
   const [errors, setErrors] = useState([])
   const [status, setStatus] = useState(null)
 
@@ -52,7 +51,7 @@ const Login = () => {
         <div>
           <Label htmlFor="email">Email</Label>
 
-          <Input
+          {/*<Input
             id="email"
             type="email"
             value={email}
@@ -60,7 +59,7 @@ const Login = () => {
             onChange={event => setEmail(event.target.value)}
             required
             autoFocus
-          />
+          />*/}
 
           <InputError messages={errors.email} className="mt-2" />
         </div>
@@ -69,7 +68,7 @@ const Login = () => {
         <div className="mt-4">
           <Label htmlFor="password">Password</Label>
 
-          <Input
+          {/*<Input
             id="password"
             type="password"
             value={password}
@@ -77,7 +76,7 @@ const Login = () => {
             onChange={event => setPassword(event.target.value)}
             required
             autoComplete="current-password"
-          />
+          />*/}
 
           <InputError messages={errors.password} className="mt-2" />
         </div>
@@ -85,13 +84,13 @@ const Login = () => {
         {/* Remember Me */}
         <div className="block mt-4">
           <label htmlFor="remember_me" className="inline-flex items-center">
-            <input
+            {/*<input
               id="remember_me"
               type="checkbox"
               name="remember"
               className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               onChange={event => setShouldRemember(event.target.checked)}
-            />
+            />*/}
 
             <span className="ml-2 text-sm text-gray-600">Remember me</span>
           </label>
