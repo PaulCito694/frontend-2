@@ -69,13 +69,23 @@ const Header = () => {
             </IconButton>
             <IconButton
               sx={{
-                backgroundColor: pathname === '/users' ? '#67e8f9' : '',
+                backgroundColor: pathname === '/employees' ? '#67e8f9' : '',
               }}
               size="large"
               className="flex flex-col"
-              onClick={() => push('./users')}>
+              onClick={() => push('./employees')}>
               <GroupIcon />
-              Usuarios
+              Empleados
+            </IconButton>
+            <IconButton
+              sx={{
+                backgroundColor: pathname === '/customers' ? '#67e8f9' : '',
+              }}
+              size="large"
+              className="flex flex-col"
+              onClick={() => push('./customers')}>
+              <VaccinesIcon />
+              Clientes
             </IconButton>
           </div>
         </h2>

@@ -112,17 +112,77 @@ const Page = () => {
               <Table className="mb-8" size="small">
                 <TableHead>
                   <TableRow className="bg-blue-500" onMouseUp={() => {}}>
-                    <TableCell align="center" width={8}>
-                      NOmbre
-                    </TableCell>
-                    <TableCell align="center" width={400}>
+                    <TableCell align="center">
                       Codigo
                     </TableCell>
-                    <TableCell align="center">Fecha de vencimiento</TableCell>
-                    <TableCell align="center">U. M.</TableCell>
-                    <TableCell align="center">Cantidad</TableCell>
+                    <TableCell align="center" width={400}>
+                      Nombre del Producto
+                    </TableCell>
+                    <TableCell align="center">
+                      Descripcion
+                    </TableCell>
+                    <TableCell align="center">
+                      Fecha de Vencimiento
+                    </TableCell>
+                    <TableCell align="center">
+                      Ubicacion de Medicamento
+                    </TableCell>
                     <TableCell align="center" width={100}>
-                      Precio
+                      Peso
+                    </TableCell>
+                    <TableCell align="center">
+                      Marca del Producto
+                    </TableCell>
+                    <TableCell align="center">
+                      Laboratorio
+                    </TableCell>
+                    <TableCell align="center">
+                      Componente
+                    </TableCell>
+                    <TableCell align="center">
+                      Sintomas
+                    </TableCell>
+                    <TableCell align="center">
+                      Tipo de IGV
+                    </TableCell>
+                    <TableCell align="center">
+                      Moneda
+                    </TableCell>
+                    <TableCell align="center">
+                      Precio de venta (Inc. IGV)
+                    </TableCell>
+                    <TableCell align="center">
+                      Precio de venta (Sin IGV)
+                    </TableCell>
+                    <TableCell align="center">
+                      Unidad de Medida
+                    </TableCell>
+                    <TableCell align="center">
+                      Stock Inicial
+                    </TableCell>
+                    <TableCell align="center">
+                      Stock Minimo
+                    </TableCell>
+                    <TableCell align="center">
+                      Precio Compra (Inc. IGV)
+                    </TableCell>
+                    <TableCell align="center">
+                      Ganancia Maxima
+                    </TableCell>
+                    <TableCell align="center">
+                      Ganancia Optima
+                    </TableCell>
+                    <TableCell align="center">
+                      ¿Es Efecto al ICBPER?
+                    </TableCell>
+                    <TableCell align="center">
+                      ¿Utilizar multi precio?
+                    </TableCell>
+                    <TableCell align="center">
+                      Registro Digemid
+                    </TableCell>
+                    <TableCell align="center">
+                      Registro Lote
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -130,25 +190,30 @@ const Page = () => {
                   {productList?.map((_message, index) => {
                     return (
                       <TableRow className="flex" key={index}>
-                        <TableCell>{_message.name}</TableCell>
                         <TableCell>{_message.code}</TableCell>
+                        <TableCell>{_message.name}</TableCell>
+                        <TableCell>{_message.description}</TableCell>
                         <TableCell>{_message.expirationDate}</TableCell>
                         <TableCell>{_message.location}</TableCell>
                         <TableCell>{_message.weight}</TableCell>
-                        <TableCell>{_message.brand}</TableCell>{' '}
-                        {/*TODO: Acabar esta tabla*/}
-                        {/*{_message.name} - {_message.code} -{' '}
-                        {_message.expirationDate} - {_message.location} -
-                        {_message.weight}-{_message.brand}-{_message.labaratory}-
-                        {_message.component}-{_message.symptom}-{_message.igvType}-
-                        {_message.currency}-{_message.salePriceIncIGV}-
-                        {_message.salePriceExIGV}-{_message.unitOfMeasure}-
-                        {_message.initialStok}-{_message.minStok}-
-                        {_message.purchasePrice}-{_message.profitMax}-
-                        {_message.profitOpt}-
-                        {_message.icbper ? 'Es verdadero' : 'Es falso'}-
-                        {_message.multiPrice}-{_message.digemid}-
-                        {_message.batchRegister}*/}
+                        <TableCell>{_message.brand}</TableCell>
+                        <TableCell>{_message.labaratory}</TableCell>
+                        <TableCell>{_message.component}</TableCell>
+                        <TableCell>{_message.symptom}</TableCell>
+                        <TableCell>{_message.igvType}</TableCell>
+                        <TableCell>{_message.currency}</TableCell>
+                        <TableCell>{_message.salePriceIncIGV}</TableCell>
+                        <TableCell>{_message.salePriceExIGV}</TableCell>
+                        <TableCell>{_message.unitOfMeasure}</TableCell>
+                        <TableCell>{_message.initialStok}</TableCell>
+                        <TableCell>{_message.minStok}</TableCell>
+                        <TableCell>{_message.purchasePrice}</TableCell>
+                        <TableCell>{_message.profitMax}</TableCell>
+                        <TableCell>{_message.profitOpt}</TableCell>
+                        <TableCell>{_message.icbper ? 'Es verdadero' : 'Es falso'}</TableCell>
+                        <TableCell>{_message.multiPrice}</TableCell>
+                        <TableCell>{_message.digemid}</TableCell>
+                        <TableCell>{_message.batchRegister}</TableCell>
                       </TableRow>
                     )
                   })}
