@@ -10,9 +10,7 @@ const useCustomers = () => {
     )
     const createCustomer = async data => {
         try {
-            console.log("URL de creación:", `${axios.defaults.baseURL}/api/customers`);
-            await axios.post('api/customers', data)
-            
+            await axios.post('api/customers', data)            
             mutate()
         } catch (error) {
             console.error('Error al agregar el cliente', error.response ? error.response.data : error)
