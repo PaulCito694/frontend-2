@@ -56,7 +56,7 @@ const Page = () => {
                       <Input name="name" label={'Nombre del Producto'} />
                       <Input name="description" label={'Descripcion'} />
                       <Input
-                        name="expirationDate"
+                        name="expiration_date"
                         label={'Fecha de vencimiento'}
                         type="date"
                       />
@@ -66,44 +66,44 @@ const Page = () => {
                       />
                       <Input name="weight" label={'Peso'} type="number" />
                       <Input name="brand" label={'Marca del Producto'} />
-                      <Input name="labaratory" label={'Laboratorio'} />
+                      <Input name="laboratory" label={'Laboratorio'} />
                       <Input name="component" label={'Componente'} />
                       <Input name="symptom" label={'Sintomas'} />
-                      <Input name="igvType" label={'Tipo de IGV'} />
+                      <Input name="igv_type" label={'Tipo de IGV'} />
                       <Input name="currency" label={'Moneda'} />
                       <Input
-                        name="salePriceIncIGV"
+                        name="sale_price_inc_igv"
                         label={'Precio de venta (Inc. IGV)'}
                         type="number"
                       />
                       <Input
-                        name="salePriceExIGV"
+                        name="sale_price_ex_igv"
                         label={'Precio de venta (Sin IGV)'}
                         type="number"
                       />
-                      <Input name="unitOfMeasure" label={'Unidad de Medida'} />
+                      <Input name="unit_of_measure" label={'Unidad de Medida'} />
                       <Input
-                        name="initialStok"
+                        name="initial_stok"
                         label={'Stok inicial'}
                         type="number"
                       />
                       <Input
-                        name="minStok"
+                        name="min_stok"
                         label={'Stok Minimo'}
                         type="number"
                       />
                       <Input
-                        name="purchasePrice"
+                        name="purchase_price"
                         label={'Precio Compra (Inc. IGV)'}
                         type="number"
                       />
                       <Input
-                        name="profitMax"
+                        name="profit_max"
                         label={'Ganacia Maxima'}
                         type="number"
                       />
                       <Input
-                        name="profitOpt"
+                        name="profit_opt"
                         label={'Ganacia Optima'}
                         type="number"
                       />
@@ -113,7 +113,7 @@ const Page = () => {
                         type="checkbox"
                       />
                       <Input
-                        name="multiPrice"
+                        name="multi_price"
                         label={'¿Utilizar multi precio?'}
                         type="checkbox"
                       />
