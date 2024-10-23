@@ -21,12 +21,11 @@ const useProducts = () => {
     useSWR(`api/products/${id}`, url => axios.get(url).then(res => res.data))
 
   const deleteProductById = id =>
-    useSWR(`api/products/${id}`, url => axios.delete(url).then(res => res.data))
+    axios.delete(`api/products/${id}`).then(res => res.data)
 
-  const updateProductById = values =>
-    useSWR(`api/products/${values['id']}`, url =>
-      axios.put(url, values).then(res => res.data),
-    )
+  const updateProductById = values => {
+    axios.put(`api/products/${values['id']}`, values).then(res => res.data)
+  }
 
   return {
     getProductById,

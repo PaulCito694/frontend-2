@@ -199,29 +199,29 @@ const Page = () => {
                                 <TableCell>{product.code}</TableCell>
                                 <TableCell>{product.name}</TableCell>
                                 <TableCell>{product.description}</TableCell>
-                                <TableCell>{product.expirationDate}</TableCell>
+                                <TableCell>{product.expiration_date}</TableCell>
                                 <TableCell>{product.location}</TableCell>
                                 <TableCell>{product.weight}</TableCell>
                                 <TableCell>{product.brand}</TableCell>
                                 <TableCell>{product.labaratory}</TableCell>
                                 <TableCell>{product.component}</TableCell>
                                 <TableCell>{product.symptom}</TableCell>
-                                <TableCell>{product.igvType}</TableCell>
+                                <TableCell>{product.igv_type}</TableCell>
                                 <TableCell>{product.currency}</TableCell>
-                                <TableCell>{product.salePriceIncIGV}</TableCell>
-                                <TableCell>{product.salePriceExIGV}</TableCell>
-                                <TableCell>{product.unitOfMeasure}</TableCell>
-                                <TableCell>{product.initialStok}</TableCell>
-                                <TableCell>{product.minStok}</TableCell>
-                                <TableCell>{product.purchasePrice}</TableCell>
-                                <TableCell>{product.profitMax}</TableCell>
-                                <TableCell>{product.profitOpt}</TableCell>
+                                <TableCell>{product.sale_price_inc_igv}</TableCell>
+                                <TableCell>{product.sale_price_ex_igv}</TableCell>
+                                <TableCell>{product.unit_of_measure}</TableCell>
+                                <TableCell>{product.initial_stok}</TableCell>
+                                <TableCell>{product.min_stok}</TableCell>
+                                <TableCell>{product.purchase_price}</TableCell>
+                                <TableCell>{product.profit_max}</TableCell>
+                                <TableCell>{product.profit_opt}</TableCell>
                                 <TableCell>
                                   {product.icbper ? 'Es verdadero' : 'Es falso'}
                                 </TableCell>
-                                <TableCell>{product.multiPrice}</TableCell>
+                                <TableCell>{product.multi_price}</TableCell>
                                 <TableCell>{product.digemid}</TableCell>
-                                <TableCell>{product.batchRegister}</TableCell>
+                                <TableCell>{product.batch_register}</TableCell>
                                 <TableCell>
                                   <IconButton
                                     onClick={() => {
@@ -232,7 +232,7 @@ const Page = () => {
                                   </IconButton>
                                   <IconButton
                                     onClick={() => {
-                                      deleteProductById(product)
+                                      deleteProductById(product.id)
                                     }}
                                     sx={{ padding: 0 }}>
                                     <DeleteIcon />
