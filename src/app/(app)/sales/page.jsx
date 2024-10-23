@@ -10,6 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
 } from '@mui/material'
 import useSales from '@/hooks/useSales'
 import jsPDF from 'jspdf'
@@ -17,6 +18,11 @@ import PictureAsPdf from '@mui/icons-material/PictureAsPdf'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { numberToLetters } from '@/utils/number_to_letters'
 import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import ErrorIcon from '@mui/icons-material/Error'
+import CancelIcon from '@mui/icons-material/Cancel'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'
+import SunatButton from '@/app/(app)/sales/components/SunatButton'
 
 const Page = () => {
   const { saleList, isMutating, trigger } = useSales()
@@ -259,8 +265,15 @@ const Page = () => {
                       Tipo de venta
                     </TableCell>
                     <TableCell sx={{ fontWeight: 800 }}>Total</TableCell>
-                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
-                    <TableCell sx={{ fontWeight: 800 }}>Ticket</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }} align="center">
+                      Comprobante
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }} align="center">
+                      Ticket
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }} align="center">
+                      Estado SUNAT
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -290,17 +303,55 @@ const Page = () => {
                         </TableCell>
                         <TableCell>{saleKindTransduction(sale.kind)}</TableCell>
                         <TableCell>S/. {sale.total}</TableCell>
-                        <TableCell>
+                        <TableCell align="center">
                           <PictureAsPdf
                             onClick={() => generateInvoicePDF(sale)}
                             className="cursor-pointer"
                           />
                         </TableCell>
-                        <TableCell>
+                        <TableCell align="center">
                           <ReceiptIcon
                             onClick={() => generateInvoiceTicket(sale)}
                             className="cursor-pointer"
                           />
+                        </TableCell>
+                        <TableCell align="center">
+                          {sale.sunat_data?.can_send ? (
+                            <div>
+                              <Tooltip
+                                title={sale.sunat_data?.message}
+                                placement="top">
+                                {sale.sunat_data.sended ? (
+                                  sale.sunat_data?.success ? (
+                                    <CheckCircleIcon color="success" />
+                                  ) : (
+                                    <CancelIcon color="error" />
+                                  )
+                                ) : (
+                                  <ErrorIcon color="warning" />
+                                )}
+                              </Tooltip>
+                              <div>
+                                {sale.sunat_data.sended &&
+                                  !sale.sunat_data?.success && (
+                                    <SunatButton
+                                      buttonText="Reintentar"
+                                      saleId={sale.id}
+                                      trigger={trigger}
+                                    />
+                                  )}
+                                {!sale.sunat_data.sended && (
+                                  <SunatButton
+                                    buttonText="Enviar"
+                                    saleId={sale.id}
+                                    trigger={trigger}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <RemoveCircleIcon color="disabled" />
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

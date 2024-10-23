@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '@/app/(app)/Header'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
 import {
   Card,
+  CircularProgress,
   IconButton,
   Table,
   TableBody,
@@ -29,6 +30,22 @@ const Page = () => {
   const { createSale } = useSales()
   const [hoveredRow, setHoveredRow] = React.useState(null)
   const router = useRouter()
+  const [filteredProducts, setFilteredProducts] = useState(productList)
+  const [searchText, setSearchText] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const searchTextLower = searchText.toLowerCase()
+    setFilteredProducts(
+      productList?.filter(product =>
+        product.name?.toLowerCase()?.includes(searchTextLower),
+      ),
+    )
+  }, [searchText])
+
+  useEffect(() => {
+    setFilteredProducts(productList)
+  }, [productList])
 
   if (isLoading) return <div>Cargando prro...</div>
 
@@ -46,13 +63,16 @@ const Page = () => {
                   ...arrayMutators,
                 }}
                 onSubmit={values => {
-                  createSale(values).then(() => router.push('/sales'))
+                  setLoading(true)
+                  createSale(values)
+                    .then(() => router.push('/sales'))
+                    .finally(() => setLoading(false))
                 }}
                 initialValues={{
                   state: 'payed',
                   kind: 'sales_note',
                 }}
-                render={({ handleSubmit, submitting }) => (
+                render={({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <FieldArray name="sale_details_attributes">
                       {({ fields }) => (
@@ -98,15 +118,19 @@ const Page = () => {
                                     },
                                   ]}
                                 />
-                                <Button type="submit" disabled={submitting}>
-                                  Guardar Venta
-                                </Button>
+                                <div className="flex items-center gap-4">
+                                  <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="relative">
+                                    Guardar Venta
+                                  </Button>
+                                  {loading && <CircularProgress size={24} />}
+                                </div>
                               </div>
                               <Table className="mb-8" size="small">
                                 <TableHead>
-                                  <TableRow
-                                    className="bg-blue-500"
-                                    onMouseUp={() => {}}>
+                                  <TableRow className="bg-blue-500">
                                     <TableCell align="center" width={8}>
                                       Nro.
                                     </TableCell>
@@ -212,6 +236,11 @@ const Page = () => {
                             <h2 className="text-2xl mb-4">
                               Listado de productos:
                             </h2>
+                            <Input
+                              name="search"
+                              label="Buscar"
+                              onChange={setSearchText}
+                            />
                             <Card>
                               <Table size="small">
                                 <TableHead>
@@ -256,7 +285,7 @@ const Page = () => {
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                  {productList?.map((product, index) => (
+                                  {filteredProducts?.map((product, index) => (
                                     <TableRow
                                       onClick={() => {
                                         const foundProductIndex = fields.value?.findIndex(

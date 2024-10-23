@@ -12,15 +12,14 @@ const useProducts = () => {
   )
 
   const createSale = async data => {
-    try {
-      await axios.post('api/sales', data)
-      trigger()
-    } catch (error) {
-      console.error('Error al agregar el producto:', error)
-    }
+    await axios.post('api/sales', data)
+    trigger()
   }
 
   const getProductById = id => useSWR(`api/sales/${id}`, getSaleList)
+
+  const sendSunat = id =>
+    axios.post(`api/sales/${id}/send_sunat`).then(res => res.data)
 
   return {
     getProductById,
@@ -28,6 +27,7 @@ const useProducts = () => {
     isMutating,
     createSale,
     trigger,
+    sendSunat,
   }
 }
 
