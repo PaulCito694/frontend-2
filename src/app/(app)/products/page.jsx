@@ -6,10 +6,25 @@ import useProduct from '@/hooks/useProducts'
 import { Form } from 'react-final-form'
 import Input from '@/components/Input'
 import Header from '@/app/(app)/Header'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import {
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 const Page = () => {
-  const { productList, isLoading, createProduct } = useProduct()
+  const {
+    productList,
+    isLoading,
+    createProduct,
+    deleteProductById,
+    updateProductById,
+  } = useProduct()
 
   if (isLoading) return <div>Cargando prro...</div>
 
@@ -22,16 +37,26 @@ const Page = () => {
             <div className="p-6 bg-white border-b border-gray-200">
               <Form
                 //mutators={{ clear: clearMutator }}
-                onSubmit={values => createProduct(values)}
-                render={({ handleSubmit, submitting }) => (
+                onSubmit={values => {
+                  if (values['id']) {
+                    updateProductById(values)
+                  } else createProduct(values)
+                }}
+                render={({
+                  handleSubmit,
+                  submitting,
+                  values,
+                  form: { reset },
+                }) => (
                   <form className="mb-8" onSubmit={handleSubmit}>
                     <h2 className="mb-4">Crear un producto</h2>
                     <div className="grid gap-4 grid-cols-6 mb-4">
+                      <Input name="id" label="ID" parentClassName="hidden" />
                       <Input name="code" label={'Codigo'} />
                       <Input name="name" label={'Nombre del Producto'} />
                       <Input name="description" label={'Descripcion'} />
                       <Input
-                        name="expirationDate"
+                        name="expiration_date"
                         label={'Fecha de vencimiento'}
                         type="date"
                       />
@@ -41,44 +66,44 @@ const Page = () => {
                       />
                       <Input name="weight" label={'Peso'} type="number" />
                       <Input name="brand" label={'Marca del Producto'} />
-                      <Input name="labaratory" label={'Laboratorio'} />
+                      <Input name="laboratory" label={'Laboratorio'} />
                       <Input name="component" label={'Componente'} />
                       <Input name="symptom" label={'Sintomas'} />
-                      <Input name="igvType" label={'Tipo de IGV'} />
+                      <Input name="igv_type" label={'Tipo de IGV'} />
                       <Input name="currency" label={'Moneda'} />
                       <Input
-                        name="salePriceIncIGV"
+                        name="sale_price_inc_igv"
                         label={'Precio de venta (Inc. IGV)'}
                         type="number"
                       />
                       <Input
-                        name="salePriceExIGV"
+                        name="sale_price_ex_igv"
                         label={'Precio de venta (Sin IGV)'}
                         type="number"
                       />
-                      <Input name="unitOfMeasure" label={'Unidad de Medida'} />
+                      <Input name="unit_of_measure" label={'Unidad de Medida'} />
                       <Input
-                        name="initialStok"
+                        name="initial_stok"
                         label={'Stok inicial'}
                         type="number"
                       />
                       <Input
-                        name="minStok"
+                        name="min_stok"
                         label={'Stok Minimo'}
                         type="number"
                       />
                       <Input
-                        name="purchasePrice"
+                        name="purchase_price"
                         label={'Precio Compra (Inc. IGV)'}
                         type="number"
                       />
                       <Input
-                        name="profitMax"
+                        name="profit_max"
                         label={'Ganacia Maxima'}
                         type="number"
                       />
                       <Input
-                        name="profitOpt"
+                        name="profit_opt"
                         label={'Ganacia Optima'}
                         type="number"
                       />
@@ -88,7 +113,7 @@ const Page = () => {
                         type="checkbox"
                       />
                       <Input
-                        name="multiPrice"
+                        name="multi_price"
                         label={'¿Utilizar multi precio?'}
                         type="checkbox"
                       />
@@ -106,119 +131,123 @@ const Page = () => {
                     <Button type="submit" disabled={submitting}>
                       Crear producto
                     </Button>
+                    <div className="overflow-x-auto">
+                      <Table className="mb-8" size="small">
+                        <TableHead>
+                          <TableRow
+                            className="bg-blue-500"
+                            onMouseUp={() => {}}>
+                            <TableCell align="center">Codigo</TableCell>
+                            <TableCell align="center" width={400}>
+                              Nombre del Producto
+                            </TableCell>
+                            <TableCell align="center">Descripcion</TableCell>
+                            <TableCell align="center">
+                              Fecha de Vencimiento
+                            </TableCell>
+                            <TableCell align="center">
+                              Ubicacion de Medicamento
+                            </TableCell>
+                            <TableCell align="center" width={100}>
+                              Peso
+                            </TableCell>
+                            <TableCell align="center">
+                              Marca del Producto
+                            </TableCell>
+                            <TableCell align="center">Laboratorio</TableCell>
+                            <TableCell align="center">Componente</TableCell>
+                            <TableCell align="center">Sintomas</TableCell>
+                            <TableCell align="center">Tipo de IGV</TableCell>
+                            <TableCell align="center">Moneda</TableCell>
+                            <TableCell align="center">
+                              Precio de venta (Inc. IGV)
+                            </TableCell>
+                            <TableCell align="center">
+                              Precio de venta (Sin IGV)
+                            </TableCell>
+                            <TableCell align="center">
+                              Unidad de Medida
+                            </TableCell>
+                            <TableCell align="center">Stock Inicial</TableCell>
+                            <TableCell align="center">Stock Minimo</TableCell>
+                            <TableCell align="center">
+                              Precio Compra (Inc. IGV)
+                            </TableCell>
+                            <TableCell align="center">
+                              Ganancia Maxima
+                            </TableCell>
+                            <TableCell align="center">
+                              Ganancia Optima
+                            </TableCell>
+                            <TableCell align="center">
+                              ¿Es Efecto al ICBPER?
+                            </TableCell>
+                            <TableCell align="center">
+                              ¿Utilizar multi precio?
+                            </TableCell>
+                            <TableCell align="center">
+                              Registro Digemid
+                            </TableCell>
+                            <TableCell align="center">Registro Lote</TableCell>
+                            <TableCell align="center">Acciones</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {productList?.map((product, index) => {
+                            return (
+                              <TableRow className="flex" key={index}>
+                                <TableCell>{product.code}</TableCell>
+                                <TableCell>{product.name}</TableCell>
+                                <TableCell>{product.description}</TableCell>
+                                <TableCell>{product.expiration_date}</TableCell>
+                                <TableCell>{product.location}</TableCell>
+                                <TableCell>{product.weight}</TableCell>
+                                <TableCell>{product.brand}</TableCell>
+                                <TableCell>{product.labaratory}</TableCell>
+                                <TableCell>{product.component}</TableCell>
+                                <TableCell>{product.symptom}</TableCell>
+                                <TableCell>{product.igv_type}</TableCell>
+                                <TableCell>{product.currency}</TableCell>
+                                <TableCell>{product.sale_price_inc_igv}</TableCell>
+                                <TableCell>{product.sale_price_ex_igv}</TableCell>
+                                <TableCell>{product.unit_of_measure}</TableCell>
+                                <TableCell>{product.initial_stok}</TableCell>
+                                <TableCell>{product.min_stok}</TableCell>
+                                <TableCell>{product.purchase_price}</TableCell>
+                                <TableCell>{product.profit_max}</TableCell>
+                                <TableCell>{product.profit_opt}</TableCell>
+                                <TableCell>
+                                  {product.icbper ? 'Es verdadero' : 'Es falso'}
+                                </TableCell>
+                                <TableCell>{product.multi_price}</TableCell>
+                                <TableCell>{product.digemid}</TableCell>
+                                <TableCell>{product.batch_register}</TableCell>
+                                <TableCell>
+                                  <IconButton
+                                    onClick={() => {
+                                      reset(product)
+                                    }}
+                                    sx={{ padding: 0 }}>
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    onClick={() => {
+                                      deleteProductById(product.id)
+                                    }}
+                                    sx={{ padding: 0 }}>
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    <pre>{JSON.stringify(values, null, 2)}</pre>
                   </form>
                 )}
               />
-              <Table className="mb-8" size="small">
-                <TableHead>
-                  <TableRow className="bg-blue-500" onMouseUp={() => {}}>
-                    <TableCell align="center">
-                      Codigo
-                    </TableCell>
-                    <TableCell align="center" width={400}>
-                      Nombre del Producto
-                    </TableCell>
-                    <TableCell align="center">
-                      Descripcion
-                    </TableCell>
-                    <TableCell align="center">
-                      Fecha de Vencimiento
-                    </TableCell>
-                    <TableCell align="center">
-                      Ubicacion de Medicamento
-                    </TableCell>
-                    <TableCell align="center" width={100}>
-                      Peso
-                    </TableCell>
-                    <TableCell align="center">
-                      Marca del Producto
-                    </TableCell>
-                    <TableCell align="center">
-                      Laboratorio
-                    </TableCell>
-                    <TableCell align="center">
-                      Componente
-                    </TableCell>
-                    <TableCell align="center">
-                      Sintomas
-                    </TableCell>
-                    <TableCell align="center">
-                      Tipo de IGV
-                    </TableCell>
-                    <TableCell align="center">
-                      Moneda
-                    </TableCell>
-                    <TableCell align="center">
-                      Precio de venta (Inc. IGV)
-                    </TableCell>
-                    <TableCell align="center">
-                      Precio de venta (Sin IGV)
-                    </TableCell>
-                    <TableCell align="center">
-                      Unidad de Medida
-                    </TableCell>
-                    <TableCell align="center">
-                      Stock Inicial
-                    </TableCell>
-                    <TableCell align="center">
-                      Stock Minimo
-                    </TableCell>
-                    <TableCell align="center">
-                      Precio Compra (Inc. IGV)
-                    </TableCell>
-                    <TableCell align="center">
-                      Ganancia Maxima
-                    </TableCell>
-                    <TableCell align="center">
-                      Ganancia Optima
-                    </TableCell>
-                    <TableCell align="center">
-                      ¿Es Efecto al ICBPER?
-                    </TableCell>
-                    <TableCell align="center">
-                      ¿Utilizar multi precio?
-                    </TableCell>
-                    <TableCell align="center">
-                      Registro Digemid
-                    </TableCell>
-                    <TableCell align="center">
-                      Registro Lote
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {productList?.map((_message, index) => {
-                    return (
-                      <TableRow className="flex" key={index}>
-                        <TableCell>{_message.code}</TableCell>
-                        <TableCell>{_message.name}</TableCell>
-                        <TableCell>{_message.description}</TableCell>
-                        <TableCell>{_message.expirationDate}</TableCell>
-                        <TableCell>{_message.location}</TableCell>
-                        <TableCell>{_message.weight}</TableCell>
-                        <TableCell>{_message.brand}</TableCell>
-                        <TableCell>{_message.labaratory}</TableCell>
-                        <TableCell>{_message.component}</TableCell>
-                        <TableCell>{_message.symptom}</TableCell>
-                        <TableCell>{_message.igvType}</TableCell>
-                        <TableCell>{_message.currency}</TableCell>
-                        <TableCell>{_message.salePriceIncIGV}</TableCell>
-                        <TableCell>{_message.salePriceExIGV}</TableCell>
-                        <TableCell>{_message.unitOfMeasure}</TableCell>
-                        <TableCell>{_message.initialStok}</TableCell>
-                        <TableCell>{_message.minStok}</TableCell>
-                        <TableCell>{_message.purchasePrice}</TableCell>
-                        <TableCell>{_message.profitMax}</TableCell>
-                        <TableCell>{_message.profitOpt}</TableCell>
-                        <TableCell>{_message.icbper ? 'Es verdadero' : 'Es falso'}</TableCell>
-                        <TableCell>{_message.multiPrice}</TableCell>
-                        <TableCell>{_message.digemid}</TableCell>
-                        <TableCell>{_message.batchRegister}</TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
             </div>
           </div>
         </div>
