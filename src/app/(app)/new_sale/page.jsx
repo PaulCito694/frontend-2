@@ -7,7 +7,6 @@ import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
 import {
   Card,
-  CircularProgress,
   IconButton,
   Table,
   TableBody,
@@ -118,15 +117,12 @@ const Page = () => {
                                     },
                                   ]}
                                 />
-                                <div className="flex items-center gap-4">
-                                  <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="relative">
-                                    Guardar Venta
-                                  </Button>
-                                  {loading && <CircularProgress size={24} />}
-                                </div>
+                                <Button
+                                  type="submit"
+                                  loading={loading}
+                                  className="relative">
+                                  Guardar Venta
+                                </Button>
                               </div>
                               <Table className="mb-8" size="small">
                                 <TableHead>
