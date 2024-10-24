@@ -21,6 +21,11 @@ const useProducts = () => {
   const sendSunat = id =>
     axios.post(`api/sales/${id}/send_sunat`).then(res => res.data)
 
+  const querySunat = id =>
+    axios.post(`api/sales/${id}/query_sunat`).then(res => res.data)
+
+  const cancel = id => axios.put(`api/sales/${id}/cancel`).then(res => res.data)
+
   return {
     getProductById,
     saleList,
@@ -28,6 +33,8 @@ const useProducts = () => {
     createSale,
     trigger,
     sendSunat,
+    cancel,
+    querySunat,
   }
 }
 

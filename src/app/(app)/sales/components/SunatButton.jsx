@@ -3,9 +3,9 @@ import { green } from '@mui/material/colors'
 import React from 'react'
 import useSales from '@/hooks/useSales'
 
-const SunatButton = ({ buttonText, saleId, trigger }) => {
+const SunatButton = ({ buttonText, saleId, trigger, action = 'send' }) => {
   const [loading, setLoading] = React.useState(false)
-  const { sendSunat } = useSales()
+  const { sendSunat, querySunat } = useSales()
 
   return (
     <div className="relative">
@@ -15,10 +15,17 @@ const SunatButton = ({ buttonText, saleId, trigger }) => {
         disabled={loading}
         onClick={() => {
           setLoading(true)
-          sendSunat(saleId).finally(() => {
-            setLoading(false)
-            trigger()
-          })
+          if (action === 'send') {
+            sendSunat(saleId).finally(() => {
+              setLoading(false)
+              trigger()
+            })
+          } else {
+            querySunat(saleId).finally(() => {
+              setLoading(false)
+              trigger()
+            })
+          }
         }}>
         {buttonText}
       </Button>
