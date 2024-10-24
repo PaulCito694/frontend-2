@@ -183,7 +183,7 @@ const Page = () => {
                                           {product.expirationDate}
                                         </TableCell>
                                         <TableCell>
-                                          {product.initialStok}
+                                          {product.initial_stock}
                                         </TableCell>
                                         <TableCell>
                                           <Input
@@ -301,12 +301,12 @@ const Page = () => {
                                           fields.push({
                                             quantity: 1,
                                             product_id: product.id,
-                                            price: product.salePriceIncIGV,
+                                            price: product.sale_price_inc_igv,
                                             composed_name: `${product.name} (${
                                               product.lote || ' - '
                                             })`,
                                             sub_total:
-                                              1 * product.salePriceIncIGV,
+                                              1 * product.sale_price_inc_igv,
                                             ...rest,
                                           })
                                         }
@@ -325,10 +325,10 @@ const Page = () => {
                                       }}>
                                       <TableCell>{product.name}</TableCell>
                                       <TableCell>
-                                        {product.salePriceIncIGV}
+                                        {product.sale_price_inc_igv}
                                       </TableCell>
                                       <TableCell>
-                                        {product.initialStok}
+                                        {product.initial_stock}
                                       </TableCell>
                                       <TableCell>{product.lote}</TableCell>
                                       <TableCell>

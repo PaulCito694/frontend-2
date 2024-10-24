@@ -203,7 +203,7 @@ const Page = () => {
                                 <TableCell>{product.location}</TableCell>
                                 <TableCell>{product.weight}</TableCell>
                                 <TableCell>{product.brand}</TableCell>
-                                <TableCell>{product.labaratory}</TableCell>
+                                <TableCell>{product.laboratory}</TableCell>
                                 <TableCell>{product.component}</TableCell>
                                 <TableCell>{product.symptom}</TableCell>
                                 <TableCell>{product.igv_type}</TableCell>
