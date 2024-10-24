@@ -121,7 +121,7 @@ const Page = () => {
         partialY,
       )
       doc.text(
-        sale_detail.product.labaratory?.toString() || ' - ',
+        sale_detail.product.laboratory?.toString() || ' - ',
         42,
         partialY,
       )
