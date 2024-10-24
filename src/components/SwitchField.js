@@ -11,8 +11,9 @@ const SwitchField = ({ name, label, validate }) => {
     <div className="grid">
       <label>{label}</label>
       <Switch
-        onChange={e => input.onChange(e.target.checked)}
-        value={input.value}
+        onChange={e => {
+          input.onChange(e.target.checked)
+        }}
       />
       {touched && error}
     </div>
