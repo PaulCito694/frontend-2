@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Header from '@/app/(app)/Header'
 import {
   IconButton,
   Table,
@@ -26,6 +25,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { generateInvoicePDF, generateInvoiceTicket } from '@/utils/pdf'
 import AlertDialog from '@/components/AlertDialog'
 import SendIcon from '@mui/icons-material/Send'
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
+import { generateSalesXLSX } from '@/utils/xlsx'
+import Button from '@/components/Button'
 
 const Page = () => {
   const { saleList, isMutating, trigger, cancel } = useSales()
@@ -62,18 +64,22 @@ const Page = () => {
           sale={selectedSale}
         />
       )}
-      <Header title="Scrum poker" />
       <div className="py-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
+              <div className="flex gap-4">
+                <Button onClick={() => generateSalesXLSX(saleList)}>
+                  Descargar <VerticalAlignBottomIcon />
+                </Button>
+              </div>
               <Table size="small">
                 <TableHead>
                   <TableRow>
+                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
                     <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                       Fecha
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
                     <TableCell sx={{ fontWeight: 800 }}>Cliente</TableCell>
                     <TableCell sx={{ fontWeight: 800 }}>
                       Estado de pago

@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import Header from '@/app/(app)/Header'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearArrayMutator, clearMutator } from 'utils/mutators'
@@ -35,7 +34,6 @@ const Page = () => {
 
   return (
     <>
-      <Header title="Scrum poker" />
       <div className="py-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -186,8 +184,10 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           <LabelField
-                                            name={`purchase_details_attributes[${index}].initial_stock`}
-                                            initialValue={product.initialStok}
+                                            name={`purchase_details_attributes[${index}].stock_quantity`}
+                                            initialValue={
+                                              product.stock_quantity
+                                            }
                                           />
                                         </TableCell>
                                         <TableCell>
@@ -195,7 +195,7 @@ const Page = () => {
                                             name={`purchase_details_attributes[${index}].quantity`}
                                             onChange={value => {
                                               const initialStockField = getFieldState(
-                                                `purchase_details_attributes[${index}].initial_stock`,
+                                                `purchase_details_attributes[${index}].stock_quantity`,
                                               )
 
                                               const initialStock =
@@ -210,7 +210,7 @@ const Page = () => {
                                         <TableCell>
                                           <LabelField
                                             initialValue={
-                                              product.initial_stock + 1
+                                              product.stock_quantity + 1
                                             }
                                             name={`purchase_details_attributes[${index}].last_stock`}
                                           />
@@ -346,7 +346,7 @@ const Page = () => {
                                         {product.sale_price_inc_igv}
                                       </TableCell>
                                       <TableCell>
-                                        {product.initial_stock}
+                                        {product.stock_quantity}
                                       </TableCell>
                                       <TableCell>{product.lote}</TableCell>
                                       <TableCell>

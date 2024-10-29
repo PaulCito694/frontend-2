@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import Header from '@/app/(app)/Header'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import useSales from '@/hooks/useSales'
 import jsPDF from 'jspdf'
@@ -142,7 +141,6 @@ const Page = () => {
 
   return (
     <>
-      <Header />
       <div className="pt-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">

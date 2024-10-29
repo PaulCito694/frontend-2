@@ -28,7 +28,7 @@ const Page = () => {
 
   const getMessages = async () => {
     try {
-      const m = await axios.get(`api/cards`)
+      const m = await axios().get(`api/cards`)
       setMessages(m.data)
       // setTimeout(scrollToBottom, 0)
     } catch (err) {
@@ -46,7 +46,7 @@ const Page = () => {
   }, [])
 
   const handleClick = async () => {
-    await axios.post('api/card', {
+    await axios().post('api/card', {
       text: message,
     })
     setMessage('')

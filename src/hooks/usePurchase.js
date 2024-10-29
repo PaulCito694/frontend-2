@@ -3,7 +3,9 @@ import useSWRMutation from 'swr/mutation'
 import useSWR from 'swr'
 
 const getSaleList = (url, { arg }) =>
-  axios.get(`${url}?${arg}`).then(res => res.data)
+  axios()
+    .get(`${url}?${arg}`)
+    .then(res => res.data)
 
 const usePurchase = () => {
   const { data: saleList, isMutating, trigger } = useSWRMutation(
@@ -12,7 +14,7 @@ const usePurchase = () => {
   )
 
   const createPurchase = async data => {
-    await axios.post('api/purchases', data)
+    await axios().post('api/purchases', data)
     trigger()
   }
 

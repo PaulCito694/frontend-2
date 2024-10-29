@@ -5,7 +5,6 @@ import Button from '@/components/Button'
 import useProduct from '@/hooks/useProducts'
 import { Form } from 'react-final-form'
 import Input from '@/components/Input'
-import Header from '@/app/(app)/Header'
 import {
   IconButton,
   Table,
@@ -16,6 +15,8 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { generateProductsXLSX } from '@/utils/xlsx'
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
 
 const Page = () => {
   const {
@@ -30,24 +31,17 @@ const Page = () => {
 
   return (
     <div>
-      <Header title="Productos" />
       <div className="py-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
               <Form
-                //mutators={{ clear: clearMutator }}
                 onSubmit={values => {
                   if (values['id']) {
                     updateProductById(values)
                   } else createProduct(values)
                 }}
-                render={({
-                  handleSubmit,
-                  submitting,
-                  values,
-                  form: { reset },
-                }) => (
+                render={({ handleSubmit, submitting, form: { reset } }) => (
                   <form className="mb-8" onSubmit={handleSubmit}>
                     <h2 className="mb-4">Crear un producto</h2>
                     <div className="grid gap-4 grid-cols-6 mb-4">
@@ -81,7 +75,10 @@ const Page = () => {
                         label={'Precio de venta (Sin IGV)'}
                         type="number"
                       />
-                      <Input name="unit_of_measure" label={'Unidad de Medida'} />
+                      <Input
+                        name="unit_of_measure"
+                        label={'Unidad de Medida'}
+                      />
                       <Input
                         name="initial_stok"
                         label={'Stok inicial'}
@@ -131,7 +128,13 @@ const Page = () => {
                     <Button type="submit" disabled={submitting}>
                       Crear producto
                     </Button>
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto ">
+                      <Button
+                        className="my-4"
+                        onClick={() => generateProductsXLSX(productList)}>
+                        Descargar listado de productos{' '}
+                        <VerticalAlignBottomIcon />
+                      </Button>
                       <Table className="mb-8" size="small">
                         <TableHead>
                           <TableRow
@@ -208,8 +211,12 @@ const Page = () => {
                                 <TableCell>{product.symptom}</TableCell>
                                 <TableCell>{product.igv_type}</TableCell>
                                 <TableCell>{product.currency}</TableCell>
-                                <TableCell>{product.sale_price_inc_igv}</TableCell>
-                                <TableCell>{product.sale_price_ex_igv}</TableCell>
+                                <TableCell>
+                                  {product.sale_price_inc_igv}
+                                </TableCell>
+                                <TableCell>
+                                  {product.sale_price_ex_igv}
+                                </TableCell>
                                 <TableCell>{product.unit_of_measure}</TableCell>
                                 <TableCell>{product.initial_stok}</TableCell>
                                 <TableCell>{product.min_stok}</TableCell>
@@ -244,7 +251,6 @@ const Page = () => {
                         </TableBody>
                       </Table>
                     </div>
-                    <pre>{JSON.stringify(values, null, 2)}</pre>
                   </form>
                 )}
               />

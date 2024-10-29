@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material'
 import React from 'react'
 
-const Button = ({ type = 'submit', className, loading, ...props }) => {
+const Button = ({ type = 'button', className, loading, ...props }) => {
   return (
     <div className="flex items-center gap-4">
       <button

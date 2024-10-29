@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Header from '@/app/(app)/Header'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
@@ -50,7 +49,6 @@ const Page = () => {
 
   return (
     <>
-      <Header title="Scrum poker" />
       <div className="py-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -183,7 +181,7 @@ const Page = () => {
                                           {product.expirationDate}
                                         </TableCell>
                                         <TableCell>
-                                          {product.initial_stock}
+                                          {product.stock_quantity}
                                         </TableCell>
                                         <TableCell>
                                           <Input
@@ -328,7 +326,7 @@ const Page = () => {
                                         {product.sale_price_inc_igv}
                                       </TableCell>
                                       <TableCell>
-                                        {product.initial_stock}
+                                        {product.stock_quantity}
                                       </TableCell>
                                       <TableCell>{product.lote}</TableCell>
                                       <TableCell>

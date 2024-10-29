@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import axios from '@/lib/axios'
+import axios, { axiosAuth } from '@/lib/axios'
 import { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 
@@ -7,9 +7,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   const router = useRouter()
   const params = useParams()
 
-  const { data: user, error, mutate } = useSWR('/api/user', () =>
-    axios
-      .get('/api/user')
+  const { data: user, error, mutate } = useSWR('/user', () =>
+    axiosAuth()
+      .get('login')
       .then(res => res.data)
       .catch(error => {
         if (error.response.status !== 409) throw error
@@ -18,7 +18,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
       }),
   )
 
-  const csrf = () => axios.get('/sanctum/csrf-cookie')
+  const csrf = () => axios().get('/sanctum/csrf-cookie')
 
   const register = async ({ setErrors, ...props }) => {
     await csrf()
@@ -35,19 +35,19 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
       })
   }
 
-  const login = async ({ setErrors, setStatus, ...props }) => {
-    await csrf()
+  const login = async values => {
+    // await csrf()
 
-    setErrors([])
-    setStatus(null)
+    localStorage.removeItem('token')
 
-    axios
-      .post('/login', props)
-      .then(() => mutate())
+    axiosAuth(false)
+      .post('/login', values)
+      .then(({ data }) => {
+        localStorage.setItem('token', data['token'])
+        mutate()
+      })
       .catch(error => {
         if (error.response.status !== 422) throw error
-
-        setErrors(error.response.data.errors)
       })
   }
 
@@ -93,8 +93,11 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
   const logout = async () => {
     if (!error) {
-      await axios.post('/logout').then(() => mutate())
+      await axios()
+        .delete('/logout')
+        .then(() => mutate())
     }
+    localStorage.removeItem('token')
 
     window.location.pathname = '/login'
   }

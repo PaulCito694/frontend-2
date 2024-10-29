@@ -9,6 +9,12 @@ import { DropdownButton } from '@/components/DropdownLink'
 import { useAuth } from '@/hooks/auth'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale'
+import VaccinesIcon from '@mui/icons-material/Vaccines'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import GroupIcon from '@mui/icons-material/Group'
 
 const Navigation = ({ user }) => {
   const { logout } = useAuth()
@@ -35,11 +41,41 @@ const Navigation = ({ user }) => {
                 active={usePathname() === '/dashboard'}>
                 Dashboard
               </NavLink>
-              <NavLink href="/chat" active={usePathname() === '/chat'}>
-                Chat
+              <NavLink href="/new_sale" active={usePathname() === '/new_sale'}>
+                <ShoppingCartIcon />
+                Venta rapida
               </NavLink>
-              <NavLink href="/scrum-poker" active={usePathname() === '/chat'}>
-                Scrum poker
+              <NavLink href="/sales" active={usePathname() === '/sales'}>
+                <FormatListBulletedIcon />
+                Listado de ventas
+              </NavLink>
+              <NavLink
+                href="/sale_resume"
+                active={usePathname() === '/sale_resume'}>
+                <PointOfSaleIcon />
+                Caja chica
+              </NavLink>
+              <NavLink href="/products" active={usePathname() === '/products'}>
+                <VaccinesIcon />
+                Productos
+              </NavLink>
+              <NavLink
+                href="/inventory"
+                active={usePathname() === '/inventory'}>
+                <InventoryIcon />
+                Inventario
+              </NavLink>
+              <NavLink
+                href="/employees"
+                active={usePathname() === '/employees'}>
+                <GroupIcon />
+                Empleados
+              </NavLink>
+              <NavLink
+                href="/customers"
+                active={usePathname() === '/customers'}>
+                <GroupIcon />
+                Clientes
               </NavLink>
             </div>
           </div>
@@ -68,7 +104,7 @@ const Navigation = ({ user }) => {
                 </button>
               }>
               {/* Authentication */}
-              <DropdownButton onClick={logout}>Logout</DropdownButton>
+              <DropdownButton onClick={logout}>Cerrar sesion</DropdownButton>
             </Dropdown>
           </div>
 
