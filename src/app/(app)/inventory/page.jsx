@@ -23,6 +23,7 @@ import RemoveCircle from '@mui/icons-material/RemoveCircle'
 import LabelField from '@/components/LabelField'
 import DatePickerField from '@/components/DatePickerField'
 import usePurchase from '@/hooks/usePurchase'
+import SelectField from '@/components/SelectField'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
@@ -104,6 +105,20 @@ const Page = () => {
                                 <Input
                                   name="supplier_document_number"
                                   label={'RUC'}
+                                />
+                                <SelectField
+                                  name="record_type"
+                                  label="Tipo de Registro"
+                                  data={[
+                                    {
+                                      id: 0,
+                                      name: 'compra'
+                                    },
+                                    {
+                                      id: 1,
+                                      name: 'actualizacion de producto'
+                                    }
+                                  ]}
                                 />
                                 <Button disabled={submitting} type="submit">
                                   Guardar Compra
