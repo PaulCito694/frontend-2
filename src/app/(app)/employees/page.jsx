@@ -40,12 +40,7 @@ const Page = () => {
                       updateEmployeeById(values)
                     } else createEmployee(values)
                   }}
-                  render={({
-                    handleSubmit,
-                    submitting,
-                    values,
-                    form: { reset },
-                  }) => (
+                  render={({ handleSubmit, submitting, form: { reset } }) => (
                     <form className="mb-8" onSubmit={handleSubmit}>
                       <div className="grid gap-4 grid-cols-4 mb-4">
                         <Input
@@ -165,11 +160,9 @@ const Page = () => {
                           </TableBody>
                         </Table>
                       </div>
-                      <pre>{JSON.stringify(values, null, 2)}</pre>
                     </form>
                   )}
                 />
-                {/* <pre>{JSON.stringify(employeeList, null, 2)}</pre> */}
               </div>
             </div>
           </div>

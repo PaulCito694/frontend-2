@@ -138,3 +138,50 @@ export const generateProductsXLSX = productsList => {
 
   XLSX.writeFile(workbook, 'Libro electronico de ventas.xlsx')
 }
+
+export const generateInventoryXLSX = productsList => {
+  const rows = productsList.map(product => ({
+    product_id: product.id,
+    code: product.code,
+    unit_med: product.unit_of_measure,
+    igv_type: product.igv_type,
+    category_id: product.category_id,
+    category_code: product.category_name,
+    name: product.name,
+    cod_monena: product.currency,
+    sale_price_inc_igv: product.sale_price_inc_igv,
+    min_price: product.customer?.person_dni,
+    note: product.customer?.person_name,
+    stock_quantity: product.stock_quantity,
+    min_stok: product.min_stok,
+    icbper: product.icbper,
+  }))
+
+  const workbook = XLSX.utils.book_new()
+  const worksheet = XLSX.utils.json_to_sheet(rows)
+
+  worksheet['!cols'] = Object.keys(rows).map(() => ({ width: 20 }))
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Products')
+
+  XLSX.utils.sheet_add_aoa(worksheet, [
+    [
+      'IDPRODUCTO',
+      'CODIGO',
+      'ID_UNIDAD_MEDIDA',
+      'ID_TIPOAFECTACION_IGV',
+      'ID_CATEGORIA',
+      'CODIGO_CATEGORIA',
+      'NOMBRE',
+      'ID_COD_MONEDA',
+      'PRECIO_INC_IGV',
+      'PRECIO_MINIMO',
+      'NOTA',
+      'STOCK',
+      'STOCK_MINIMO',
+      'AFECTO_ICBPER',
+    ],
+  ])
+
+  XLSX.writeFile(workbook, 'Libro electronico de ventas.xlsx')
+}

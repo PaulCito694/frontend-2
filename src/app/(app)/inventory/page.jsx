@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearArrayMutator, clearMutator } from 'utils/mutators'
@@ -12,6 +12,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableRow,
 } from '@mui/material'
@@ -24,12 +25,33 @@ import LabelField from '@/components/LabelField'
 import DatePickerField from '@/components/DatePickerField'
 import usePurchase from '@/hooks/usePurchase'
 import SelectField from '@/components/SelectField'
+import ProductsTable from '@/components/ProductsTable'
+import { generateInventoryXLSX } from '@/utils/xlsx'
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import Pagination from '@/components/Pagination'
+import ShowProductsDialog from '@/components/ShowProductsDialog'
+import {
+  isLetter,
+  isNumber,
+  length,
+  lessThan,
+  mix,
+  required,
+} from '@/utils/validations'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
-  const { createPurchase } = usePurchase()
-  const [hoveredRow, setHoveredRow] = React.useState(null)
+  const { createPurchase, purchaseList, trigger } = usePurchase()
   const [snackBarMessage, setSnackBarMessage] = React.useState({})
+  const [loading, setLoading] = useState(false)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [page, setPage] = React.useState(0)
+  const [selectedPurchase, setSelectedPurchase] = useState(null)
+
+  useEffect(() => {
+    trigger()
+  }, [])
 
   if (isLoading) return <div>Cargando prro...</div>
 
@@ -47,6 +69,7 @@ const Page = () => {
                   ...arrayMutators,
                 }}
                 onSubmit={values => {
+                  setLoading(true)
                   createPurchase(values)
                     .then(() => {
                       setSnackBarMessage({
@@ -57,22 +80,19 @@ const Page = () => {
 
                       setTimeout(() => window.location.reload(), 3000)
                     })
-                    .catch(() =>
+                    .catch(() => {
+                      setLoading(false)
                       setSnackBarMessage({
                         message:
                           'Hubo un error al actualizar el inventario, actualice la pagina e intente nuevamente',
                         severity: 'error ',
                         open: true,
-                      }),
-                    )
+                      })
+                    })
                 }}
-                render={({
-                  handleSubmit,
-                  submitting,
-                  values,
-                  form: { change, getFieldState },
-                }) => (
-                  <form onSubmit={handleSubmit}>
+                initialValues={{ record_type: 0 }}
+                render={({ handleSubmit, form: { change, getFieldState } }) => (
+                  <form onSubmit={handleSubmit} className="mb-8">
                     <Snackbar
                       open={snackBarMessage?.open}
                       autoHideDuration={3000}
@@ -96,31 +116,40 @@ const Page = () => {
                                 <Input
                                   name="document_number"
                                   label={'Numero de documento'}
+                                  validate={mix(required(), isNumber())}
                                 />
                                 <DatePickerField name="date" label={'Fecha'} />
                                 <Input
                                   name="supplier_name"
                                   label={'Proveedor'}
+                                  validate={mix(isLetter(), required())}
                                 />
                                 <Input
                                   name="supplier_document_number"
                                   label={'RUC'}
+                                  validate={mix(
+                                    required(),
+                                    length(11),
+                                    isNumber(),
+                                  )}
                                 />
                                 <SelectField
+                                  className="w-44"
                                   name="record_type"
                                   label="Tipo de Registro"
                                   data={[
                                     {
                                       id: 0,
-                                      name: 'compra'
+                                      name: 'Compra',
                                     },
                                     {
                                       id: 1,
-                                      name: 'actualizacion de producto'
-                                    }
+                                      name: 'Actualizacion de producto',
+                                    },
                                   ]}
+                                  validate={mix(required())}
                                 />
-                                <Button disabled={submitting} type="submit">
+                                <Button type="submit" loading={loading}>
                                   Guardar Compra
                                 </Button>
                               </div>
@@ -191,9 +220,6 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell width={140}>
                                           <Input
-                                            initialValue={
-                                              product.expirationDate
-                                            }
                                             name={`purchase_details_attributes[${index}].expiration_date`}
                                           />
                                         </TableCell>
@@ -213,13 +239,19 @@ const Page = () => {
                                                 `purchase_details_attributes[${index}].stock_quantity`,
                                               )
 
-                                              const initialStock =
-                                                initialStockField?.value || 0
-                                              change(
-                                                `purchase_details_attributes[${index}].last_stock`,
-                                                initialStock + Number(value),
-                                              )
+                                              if (Number(value)) {
+                                                const initialStock =
+                                                  initialStockField?.value || 0
+                                                change(
+                                                  `purchase_details_attributes[${index}].last_stock`,
+                                                  initialStock + Number(value),
+                                                )
+                                              }
                                             }}
+                                            validate={mix(
+                                              required(),
+                                              isNumber(),
+                                            )}
                                           />
                                         </TableCell>
                                         <TableCell>
@@ -228,6 +260,7 @@ const Page = () => {
                                               product.stock_quantity + 1
                                             }
                                             name={`purchase_details_attributes[${index}].last_stock`}
+                                            validate={mix(lessThan(0))}
                                           />
                                         </TableCell>
                                         <TableCell>
@@ -240,6 +273,11 @@ const Page = () => {
                                           <Input
                                             initialValue={product.price}
                                             name={`purchase_details_attributes[${index}].last_price`}
+                                            validate={mix(
+                                              required(),
+                                              isNumber(),
+                                              lessThan(0),
+                                            )}
                                           />
                                         </TableCell>
                                         <TableCell width={50}>
@@ -255,7 +293,7 @@ const Page = () => {
                                     ))
                                   ) : (
                                     <TableRow>
-                                      <TableCell colSpan={8}>
+                                      <TableCell colSpan={13}>
                                         Sin productos seleccionados. Para
                                         seleccionar debe buscar en la tabla
                                         derecha y luego hacer click sobre el
@@ -265,129 +303,114 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
-                              {/*<TotalField />*/}
-                              <pre>{JSON.stringify(values, null, 2)}</pre>
                             </Card>
                           </div>
-                          <div>
-                            <h2 className="text-2xl mb-4">
-                              Listado de productos:
-                            </h2>
-                            <Card>
-                              <Table size="small">
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell
-                                      sx={{ width: 350, fontWeight: 800 }}>
-                                      Nombre
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Precio
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Stock
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Lote
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      F. V.
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Ubicacion
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Laboratorio
-                                    </TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {productList?.map((product, index) => (
-                                    <TableRow
-                                      onClick={() => {
-                                        const foundProductIndex = fields.value?.findIndex(
-                                          _product =>
-                                            _product.product_id === product.id,
-                                        )
-                                        if (foundProductIndex >= 0) {
-                                          const foundProduct =
-                                            fields.value[foundProductIndex]
-                                          fields.update(foundProductIndex, {
-                                            ...foundProduct,
-                                            quantity:
-                                              Number(foundProduct.quantity) + 1,
-                                          })
-                                        } else {
-                                          const { id, ...rest } = product // eslint-disable-line no-unused-vars
-                                          fields.push({
-                                            quantity: 1,
-                                            product_id: product.id,
-                                            price: product.sale_price_inc_igv,
-                                            composed_name: `${product.name} (${
-                                              product.lote || ' - '
-                                            })`,
-                                            sub_total:
-                                              1 * product.sale_price_inc_igv,
-                                            ...rest,
-                                          })
-                                        }
-                                      }}
-                                      className={
-                                        hoveredRow === index &&
-                                        'bg-amber-400 cursor-pointer'
-                                      }
-                                      onMouseEnter={() => setHoveredRow(index)}
-                                      onMouseLeave={() => setHoveredRow(null)}
-                                      key={index}
-                                      sx={{
-                                        '&:last-child td, &:last-child th': {
-                                          border: 0,
-                                        },
-                                      }}>
-                                      <TableCell>{product.name}</TableCell>
-                                      <TableCell>
-                                        {product.sale_price_inc_igv}
-                                      </TableCell>
-                                      <TableCell>
-                                        {product.stock_quantity}
-                                      </TableCell>
-                                      <TableCell>{product.lote}</TableCell>
-                                      <TableCell>
-                                        {product.expirationDate}
-                                      </TableCell>
-                                      <TableCell>{product.location}</TableCell>
-                                      <TableCell>
-                                        {product.Laboratory}
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </Card>
-                          </div>
+                          <ProductsTable
+                            productList={productList}
+                            fields={fields}
+                          />
                         </div>
                       )}
                     </FieldArray>
-                    {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
                   </form>
                 )}
               />
+              <div className="flex gap-4">
+                <Button
+                  onClick={() => generateInventoryXLSX(purchaseList)}
+                  className="mb-4">
+                  Descargar <VerticalAlignBottomIcon />
+                </Button>
+              </div>
+              <Table size="small">
+                <TableHead>
+                  <TableRow className="bg-yellow-500">
+                    <TableCell sx={{ fontWeight: 800 }}>Nro</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Tipo de registro
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Nro. de document
+                    </TableCell>
+                    <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
+                      Fecha de documento
+                    </TableCell>
+                    <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
+                      Fecha de registro
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Proveedor</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Doc. proveedor
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Empleado que registra
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>
+                      Ver productos
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {purchaseList
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage,
+                    )
+                    .map((sale, index) => (
+                      <TableRow
+                        className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
+                        key={index}
+                        sx={{
+                          '&:last-child td, &:last-child th': {
+                            border: 0,
+                          },
+                        }}>
+                        <TableCell component="th" scope="row">
+                          {sale.id}
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          {sale.record_type === 'compras'
+                            ? 'Compra'
+                            : 'Actualizacion de producto'}
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          {sale.document_number}
+                        </TableCell>
+                        <TableCell align="left">{sale.date}</TableCell>
+                        <TableCell align="left">{sale.created_at}</TableCell>
+                        <TableCell>{sale.supplier_name}</TableCell>
+                        <TableCell>{sale.supplier_document_number}</TableCell>
+                        <TableCell>{sale.employee_name}</TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            onClick={() => setSelectedPurchase(sale)}
+                            color="primary">
+                            <VisibilityIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+                <TableFooter>
+                  <Pagination
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                    page={page}
+                    setPage={setPage}
+                    count={purchaseList?.length}
+                  />
+                </TableFooter>
+              </Table>
             </div>
           </div>
         </div>
       </div>
+      {selectedPurchase && (
+        <ShowProductsDialog
+          handleClose={() => setSelectedPurchase(null)}
+          purchase={selectedPurchase}
+        />
+      )}
     </>
   )
 }

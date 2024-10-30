@@ -13,10 +13,10 @@ import SelectField from '@/components/SelectField'
 import moment from 'moment'
 import Button from '@/components/Button'
 import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
+import { mix, required } from '@/utils/validations'
 
 const Page = () => {
   const { saleList, trigger } = useSales()
-  const now = moment()
 
   const generateInvoiceTicket = sale => {
     const totalHeight = 140 + sale.sale_details.length * 5
@@ -146,10 +146,6 @@ const Page = () => {
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
               <Form
-                initialValues={{
-                  from: now,
-                  to: now,
-                }}
                 onSubmit={values => {
                   trigger(
                     `date_lteq=${moment(values.to).format(
@@ -173,6 +169,7 @@ const Page = () => {
                           name: 'Liliana', //TODO: jalar de users
                         },
                       ]}
+                      validate={mix(required())}
                     />
                     <DatePickerField name="from" label="Desde" />
                     <DatePickerField name="to" label="Hasta" />
@@ -213,7 +210,7 @@ const Page = () => {
                 </div>
                 <Table size="small" className="mb-8">
                   <TableHead>
-                    <TableRow>
+                    <TableRow className="bg-yellow-500">
                       <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                         Fecha
                       </TableCell>
@@ -237,6 +234,7 @@ const Page = () => {
                   <TableBody>
                     {saleList?.results?.map((sale, index) => (
                       <TableRow
+                        className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
                         key={index}
                         sx={{
                           '&:last-child td, &:last-child th': {

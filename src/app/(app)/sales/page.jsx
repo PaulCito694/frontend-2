@@ -8,7 +8,6 @@ import {
   TableCell,
   TableFooter,
   TableHead,
-  TablePagination,
   TableRow,
   Tooltip,
 } from '@mui/material'
@@ -28,10 +27,10 @@ import SendIcon from '@mui/icons-material/Send'
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
 import { generateSalesXLSX } from '@/utils/xlsx'
 import Button from '@/components/Button'
+import Pagination from '@/components/Pagination'
 
 const Page = () => {
   const { saleList, isMutating, trigger, cancel } = useSales()
-  const [hoveredRow, setHoveredRow] = React.useState(null)
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [selectedSale, setSelectedSale] = useState(null)
@@ -41,14 +40,6 @@ const Page = () => {
   }, [])
 
   if (isMutating) return <div>Cargando prro...</div>
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
-  }
 
   return (
     <>
@@ -69,13 +60,15 @@ const Page = () => {
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
               <div className="flex gap-4">
-                <Button onClick={() => generateSalesXLSX(saleList)}>
+                <Button
+                  onClick={() => generateSalesXLSX(saleList)}
+                  className="mb-4">
                   Descargar <VerticalAlignBottomIcon />
                 </Button>
               </div>
               <Table size="small">
                 <TableHead>
-                  <TableRow>
+                  <TableRow className="bg-yellow-500">
                     <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
                     <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                       Fecha
@@ -110,19 +103,17 @@ const Page = () => {
                     )
                     .map((sale, index) => (
                       <TableRow
-                        className={hoveredRow === index && 'bg-amber-400'}
-                        onMouseEnter={() => setHoveredRow(index)}
-                        onMouseLeave={() => setHoveredRow(null)}
+                        className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
                         key={index}
                         sx={{
                           '&:last-child td, &:last-child th': {
                             border: 0,
                           },
                         }}>
-                        <TableCell align="left">{sale.date}</TableCell>
                         <TableCell component="th" scope="row">
                           {sale.invoice}
                         </TableCell>
+                        <TableCell align="left">{sale.date}</TableCell>
                         <TableCell>{sale.customer?.document_number}</TableCell>
                         <TableCell>
                           {saleStateTransduction(sale.state)}
@@ -197,21 +188,12 @@ const Page = () => {
                     ))}
                 </TableBody>
                 <TableFooter>
-                  <TablePagination
-                    rowsPerPageOptions={[10, 20]}
-                    count={saleList?.results?.length}
-                    onPageChange={handleChangePage}
-                    page={page}
+                  <Pagination
                     rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    slotProps={{
-                      select: {
-                        inputProps: {
-                          'aria-label': 'Filas por pagina',
-                        },
-                        native: true,
-                      },
-                    }}
+                    setRowsPerPage={setRowsPerPage}
+                    page={page}
+                    setPage={setPage}
+                    count={saleList?.results?.length}
                   />
                 </TableFooter>
               </Table>

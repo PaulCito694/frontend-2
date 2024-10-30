@@ -47,7 +47,7 @@ const TextFieldField = ({
         {...input}
         {...props}
       />
-      {touched && <span className="text-red-500">{error}</span>}
+      {error && touched && <span className="text-red-500">{error}</span>}
     </div>
   )
 }

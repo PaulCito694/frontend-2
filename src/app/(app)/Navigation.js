@@ -15,6 +15,7 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale'
 import VaccinesIcon from '@mui/icons-material/Vaccines'
 import InventoryIcon from '@mui/icons-material/Inventory'
 import GroupIcon from '@mui/icons-material/Group'
+import BarChartIcon from '@mui/icons-material/BarChart'
 
 const Navigation = ({ user }) => {
   const { logout } = useAuth()
@@ -39,6 +40,7 @@ const Navigation = ({ user }) => {
               <NavLink
                 href="/dashboard"
                 active={usePathname() === '/dashboard'}>
+                <BarChartIcon />
                 Dashboard
               </NavLink>
               <NavLink href="/new_sale" active={usePathname() === '/new_sale'}>

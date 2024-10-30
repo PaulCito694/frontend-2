@@ -19,7 +19,7 @@ const SelectField = ({ name, label, className, validate, data }) => {
           </MenuItem>
         ))}
       </Select>
-      {touched && error}
+      {error && touched && <span className="text-red-500">{error}</span>}
     </div>
   )
 }

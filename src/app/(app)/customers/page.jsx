@@ -6,7 +6,7 @@ import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 
 const Page = () => {
-  const { customerList, createCustomer } = useCustomers()
+  const { createCustomer } = useCustomers()
   return (
     <div>
       <div>
@@ -33,7 +33,6 @@ const Page = () => {
             </form>
           )}
         />
-        <pre>{JSON.stringify(customerList, null, 2)}</pre>
       </div>
     </div>
   )

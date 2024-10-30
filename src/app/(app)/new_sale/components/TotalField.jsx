@@ -1,6 +1,7 @@
 import { useField, useForm } from 'react-final-form'
 import React, { useEffect } from 'react'
 import Input from '@/components/Input'
+import { isNumber, mix } from '@/utils/validations'
 
 const TotalField = () => {
   let total = 0
@@ -39,7 +40,11 @@ const TotalField = () => {
   return (
     <span className="bg-green-300 p-2 mb-4 flex gap-4">
       <Input name={'total'} value={total} label="Venta en total" disabled />
-      <Input name={'received_money'} label="Dinero recibido" />
+      <Input
+        name={'received_money'}
+        label="Dinero recibido"
+        validate={mix(isNumber())}
+      />
       <Input name={'change_money'} label="Vuelto" disabled />
     </span>
   )

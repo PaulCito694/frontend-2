@@ -11,7 +11,7 @@ const LabelField = ({
 }) => {
   const {
     input,
-    meta: { error, touched },
+    meta: { error },
   } = useField(name, { validate, initialValue })
 
   return (
@@ -25,7 +25,7 @@ const LabelField = ({
         </label>
       )}
       {input.value}
-      {touched && <span className="text-red-500">{error}</span>}
+      {error && <span className="text-red-500">{error}</span>}
     </div>
   )
 }

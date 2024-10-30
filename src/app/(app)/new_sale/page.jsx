@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
@@ -22,28 +22,20 @@ import useSales from '@/hooks/useSales'
 import { useRouter } from 'next/navigation'
 import RemoveCircle from '@mui/icons-material/RemoveCircle'
 import SelectField from '@/components/SelectField'
+import ProductsTable from '@/components/ProductsTable'
+import {
+  isNumber,
+  lessThan,
+  mix,
+  moreThan,
+  required,
+} from '@/utils/validations'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
   const { createSale } = useSales()
-  const [hoveredRow, setHoveredRow] = React.useState(null)
   const router = useRouter()
-  const [filteredProducts, setFilteredProducts] = useState(productList)
-  const [searchText, setSearchText] = useState('')
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const searchTextLower = searchText.toLowerCase()
-    setFilteredProducts(
-      productList?.filter(product =>
-        product.name?.toLowerCase()?.includes(searchTextLower),
-      ),
-    )
-  }, [searchText])
-
-  useEffect(() => {
-    setFilteredProducts(productList)
-  }, [productList])
 
   if (isLoading) return <div>Cargando prro...</div>
 
@@ -96,6 +88,7 @@ const Page = () => {
                                       name: 'Pendiente de pago',
                                     },
                                   ]}
+                                  validate={mix(required())}
                                 />
                                 <SelectField
                                   name="kind"
@@ -114,6 +107,7 @@ const Page = () => {
                                       name: 'Factura',
                                     },
                                   ]}
+                                  validate={mix(required())}
                                 />
                                 <Button
                                   type="submit"
@@ -178,7 +172,7 @@ const Page = () => {
                                           {product.location}
                                         </TableCell>
                                         <TableCell>
-                                          {product.expirationDate}
+                                          {product.expiration_date}
                                         </TableCell>
                                         <TableCell>
                                           {product.stock_quantity}
@@ -186,11 +180,24 @@ const Page = () => {
                                         <TableCell>
                                           <Input
                                             name={`sale_details_attributes[${index}].quantity`}
+                                            validate={mix(
+                                              required(),
+                                              isNumber(),
+                                              moreThan(
+                                                product.stock_quantity + 1,
+                                                'No puede vender mas de lo que se encuentra en stock.',
+                                              ),
+                                            )}
                                           />
                                         </TableCell>
                                         <TableCell>
                                           <Input
                                             name={`sale_details_attributes[${index}].price`}
+                                            validate={mix(
+                                              required(),
+                                              isNumber(),
+                                              lessThan(0),
+                                            )}
                                           />
                                         </TableCell>
                                         <TableCell width={100}>
@@ -223,129 +230,15 @@ const Page = () => {
                                 </TableBody>
                               </Table>
                               <TotalField />
-                              {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
                             </Card>
                           </div>
-                          <div>
-                            <h2 className="text-2xl mb-4">
-                              Listado de productos:
-                            </h2>
-                            <Input
-                              name="search"
-                              label="Buscar"
-                              onChange={setSearchText}
-                            />
-                            <Card>
-                              <Table size="small">
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell
-                                      sx={{
-                                        width: 350,
-                                        fontWeight: 800,
-                                      }}>
-                                      Nombre
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Precio
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Stock
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Lote
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      F. V.
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Ubicacion
-                                    </TableCell>
-                                    <TableCell
-                                      sx={{ fontWeight: 800 }}
-                                      align="right">
-                                      Laboratorio
-                                    </TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {filteredProducts?.map((product, index) => (
-                                    <TableRow
-                                      onClick={() => {
-                                        const foundProductIndex = fields.value?.findIndex(
-                                          _product =>
-                                            _product.product_id === product.id,
-                                        )
-                                        if (foundProductIndex >= 0) {
-                                          const foundProduct =
-                                            fields.value[foundProductIndex]
-                                          fields.update(foundProductIndex, {
-                                            ...foundProduct,
-                                            quantity:
-                                              Number(foundProduct.quantity) + 1,
-                                          })
-                                        } else {
-                                          const { id, ...rest } = product // eslint-disable-line no-unused-vars
-                                          fields.push({
-                                            quantity: 1,
-                                            product_id: product.id,
-                                            price: product.sale_price_inc_igv,
-                                            composed_name: `${product.name} (${
-                                              product.lote || ' - '
-                                            })`,
-                                            sub_total:
-                                              1 * product.sale_price_inc_igv,
-                                            ...rest,
-                                          })
-                                        }
-                                      }}
-                                      className={
-                                        hoveredRow === index &&
-                                        'bg-amber-400 cursor-pointer'
-                                      }
-                                      onMouseEnter={() => setHoveredRow(index)}
-                                      onMouseLeave={() => setHoveredRow(null)}
-                                      key={index}
-                                      sx={{
-                                        '&:last-child td, &:last-child th': {
-                                          border: 0,
-                                        },
-                                      }}>
-                                      <TableCell>{product.name}</TableCell>
-                                      <TableCell>
-                                        {product.sale_price_inc_igv}
-                                      </TableCell>
-                                      <TableCell>
-                                        {product.stock_quantity}
-                                      </TableCell>
-                                      <TableCell>{product.lote}</TableCell>
-                                      <TableCell>
-                                        {product.expirationDate}
-                                      </TableCell>
-                                      <TableCell>{product.location}</TableCell>
-                                      <TableCell>
-                                        {product.Laboratory}
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </Card>
-                          </div>
+                          <ProductsTable
+                            productList={productList}
+                            fields={fields}
+                          />
                         </div>
                       )}
                     </FieldArray>
-                    {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
                   </form>
                 )}
               />

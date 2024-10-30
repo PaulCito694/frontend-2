@@ -8,7 +8,7 @@ const getSaleList = (url, { arg }) =>
     .then(res => res.data)
 
 const usePurchase = () => {
-  const { data: saleList, isMutating, trigger } = useSWRMutation(
+  const { data: purchaseList, isMutating, trigger } = useSWRMutation(
     'api/purchases',
     getSaleList,
   )
@@ -22,7 +22,7 @@ const usePurchase = () => {
 
   return {
     getProductById,
-    saleList,
+    purchaseList,
     isMutating,
     createPurchase,
     trigger,
