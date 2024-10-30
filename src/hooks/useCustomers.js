@@ -30,12 +30,17 @@ const useCustomers = () => {
         .then(res => res.data),
     )
 
-  return {
-    getCustomerById,
-    customerList,
-    isLoading,
-    createCustomer,
-  }
+    const findCustomerByDni = dni => {
+        return customerList?.find(customer => customer.person_attributes.dni === dni) || null
+    }
+
+    return {
+        getCustomerById,
+        customerList,
+        isLoading,
+        createCustomer,
+        findCustomerByDni,
+    }
 }
 
 export default useCustomers

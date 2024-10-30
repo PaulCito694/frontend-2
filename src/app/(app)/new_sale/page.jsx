@@ -30,14 +30,32 @@ import {
   moreThan,
   required,
 } from '@/utils/validations'
+import useCustomers from '@/hooks/useCustomers'
+import CustomerFields from './components/CustomerField'
+import useIdentityType from '@/hooks/useIdentityType'
 
 const Page = () => {
+  const { findCustomerByDni, isLoading: isCustomerLoading} = useCustomers()
+  const { identityTypeList, isLoading: isIdentityTypeLoading } = useIdentityType()
   const { productList, isLoading } = useProducts()
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  if (isLoading) return <div>Cargando prro...</div>
+  useEffect(() => {
+    const searchTextLower = searchText.toLowerCase()
+    setFilteredProducts(
+      productList?.filter(product =>
+        product.name?.toLowerCase()?.includes(searchTextLower),
+      ),
+    )
+  }, [searchText])
+
+  useEffect(() => {
+    setFilteredProducts(productList)
+  }, [productList])
+
+  if (isLoading || isCustomerLoading || isIdentityTypeLoading) return <div>Cargando prro...</div>
 
   return (
     <>
@@ -69,7 +87,7 @@ const Page = () => {
                   }
                   return errors
                 }}
-                render={({ handleSubmit }) => (
+                render={({ handleSubmit, form:{mutators:{change}} }) => (
                   <form onSubmit={handleSubmit}>
                     <FieldArray name="sale_details_attributes">
                       {({ fields, meta: { error } }) => (
@@ -78,11 +96,18 @@ const Page = () => {
                             <h2 className="text-2xl mb-4">Nueva venta:</h2>
                             <Card>
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
-                                <Input name="name" label={'Nombre'} />
-                                <Input
-                                  name="description"
-                                  label={'Descripcion'}
+                                <SelectField 
+                                  name="customer_attributes.identity_type_id" 
+                                  label={'Tipo de identidad'} 
+                                  data={
+                                    identityTypeList
+                                  }
                                 />
+                                <Input
+                                  name="customer_attributes.person_attributes.dni"
+                                  label={'Nro de documento'}
+                                />
+                                <CustomerFields/>
                                 <SelectField
                                   name="state"
                                   label="Estado de pago"
