@@ -110,6 +110,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     if (middleware === 'auth' && error) logout()
   }, [user, error])
 
+  const isAdmin = user?.role_code === 'admin'
+  const isSeller = user?.role_code === 'seller'
+  const isFinance = user?.role_code === 'finance'
+
   return {
     user,
     register,
@@ -118,5 +122,8 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     resetPassword,
     resendEmailVerification,
     logout,
+    isAdmin,
+    isSeller,
+    isFinance,
   }
 }

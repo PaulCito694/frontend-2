@@ -61,10 +61,18 @@ const Page = () => {
                   state: 'payed',
                   kind: 'sales_note',
                 }}
+                validate={values => {
+                  const errors = {}
+                  if (!values.sale_details_attributes) {
+                    errors.sale_details_attributes =
+                      'Ingrese al menos un producto'
+                  }
+                  return errors
+                }}
                 render={({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <FieldArray name="sale_details_attributes">
-                      {({ fields }) => (
+                      {({ fields, meta: { error } }) => (
                         <div className="flex flex-col-2 justify-around items-start gap-4">
                           <div>
                             <h2 className="text-2xl mb-4">Nueva venta:</h2>
@@ -229,6 +237,9 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
+                              {error && (
+                                <span className="text-red-500">{error}</span>
+                              )}
                               <TotalField />
                             </Card>
                           </div>

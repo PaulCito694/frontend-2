@@ -18,7 +18,7 @@ import GroupIcon from '@mui/icons-material/Group'
 import BarChartIcon from '@mui/icons-material/BarChart'
 
 const Navigation = ({ user }) => {
-  const { logout } = useAuth()
+  const { logout, isAdmin } = useAuth()
 
   const [open, setOpen] = useState(false)
 
@@ -30,19 +30,25 @@ const Navigation = ({ user }) => {
           <div className="flex">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/dashboard">
+              {isAdmin ? (
+                <Link href="/dashboard">
+                  <ApplicationLogo className="block h-10 w-auto fill-current text-gray-600" />
+                </Link>
+              ) : (
                 <ApplicationLogo className="block h-10 w-auto fill-current text-gray-600" />
-              </Link>
+              )}
             </div>
 
             {/* Navigation Links */}
             <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-              <NavLink
-                href="/dashboard"
-                active={usePathname() === '/dashboard'}>
-                <BarChartIcon />
-                Dashboard
-              </NavLink>
+              {isAdmin && (
+                <NavLink
+                  href="/dashboard"
+                  active={usePathname() === '/dashboard'}>
+                  <BarChartIcon />
+                  Dashboard
+                </NavLink>
+              )}
               <NavLink href="/new_sale" active={usePathname() === '/new_sale'}>
                 <ShoppingCartIcon />
                 Venta rapida
@@ -57,28 +63,38 @@ const Navigation = ({ user }) => {
                 <PointOfSaleIcon />
                 Caja chica
               </NavLink>
-              <NavLink href="/products" active={usePathname() === '/products'}>
-                <VaccinesIcon />
-                Productos
-              </NavLink>
-              <NavLink
-                href="/inventory"
-                active={usePathname() === '/inventory'}>
-                <InventoryIcon />
-                Inventario
-              </NavLink>
-              <NavLink
-                href="/employees"
-                active={usePathname() === '/employees'}>
-                <GroupIcon />
-                Empleados
-              </NavLink>
-              <NavLink
-                href="/customers"
-                active={usePathname() === '/customers'}>
-                <GroupIcon />
-                Clientes
-              </NavLink>
+              {isAdmin && (
+                <NavLink
+                  href="/products"
+                  active={usePathname() === '/products'}>
+                  <VaccinesIcon />
+                  Productos
+                </NavLink>
+              )}
+              {isAdmin && (
+                <NavLink
+                  href="/inventory"
+                  active={usePathname() === '/inventory'}>
+                  <InventoryIcon />
+                  Inventario
+                </NavLink>
+              )}
+              {isAdmin && (
+                <NavLink
+                  href="/employees"
+                  active={usePathname() === '/employees'}>
+                  <GroupIcon />
+                  Empleados
+                </NavLink>
+              )}
+              {isAdmin && (
+                <NavLink
+                  href="/customers"
+                  active={usePathname() === '/customers'}>
+                  <GroupIcon />
+                  Clientes
+                </NavLink>
+              )}
             </div>
           </div>
 

@@ -1,5 +1,4 @@
 import LoginLinks from '@/app/LoginLinks'
-import Header from '@/app/(app)/Header'
 import React from 'react'
 
 export const metadata = {
@@ -10,7 +9,6 @@ const Home = () => {
   return (
     <>
       <LoginLinks />
-      <Header title="Scrum poker" />
       <div className="py-12">
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">

@@ -91,6 +91,14 @@ const Page = () => {
                     })
                 }}
                 initialValues={{ record_type: 0 }}
+                validate={values => {
+                  const errors = {}
+                  if (!values.purchase_details_attributes) {
+                    errors.purchase_details_attributes =
+                      'Ingrese al menos un producto'
+                  }
+                  return errors
+                }}
                 render={({ handleSubmit, form: { change, getFieldState } }) => (
                   <form onSubmit={handleSubmit} className="mb-8">
                     <Snackbar
@@ -105,7 +113,7 @@ const Page = () => {
                       </Alert>
                     </Snackbar>
                     <FieldArray name="purchase_details_attributes">
-                      {({ fields }) => (
+                      {({ fields, meta: { error } }) => (
                         <div className="flex flex-col-2 justify-around items-start gap-4">
                           <div>
                             <h2 className="text-2xl mb-4">
@@ -303,6 +311,9 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
+                              {error && (
+                                <span className="text-red-500">{error}</span>
+                              )}
                             </Card>
                           </div>
                           <ProductsTable

@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import SelectField from '@/components/SelectField'
 import useRoles from '@/hooks/useRoles'
 import SwitchField from '@/components/SwitchField'
+import { isEmail, mix, required } from '@/utils/validations'
 
 const Page = () => {
   const {
@@ -42,7 +43,8 @@ const Page = () => {
                   }}
                   render={({ handleSubmit, submitting, form: { reset } }) => (
                     <form className="mb-8" onSubmit={handleSubmit}>
-                      <div className="grid gap-4 grid-cols-4 mb-4">
+                      <h2>Datos de empleado</h2>
+                      <div className="grid gap-4 grid-cols-4 mb-4 bg-gray-200 p-4">
                         <Input
                           name="id"
                           label={'id'}
@@ -52,8 +54,11 @@ const Page = () => {
                           name="person_attributes.codigo"
                           label={'Codigo'}
                         />
-                        <Input name="password" label={'Contraseña'} />
-                        <Input name="person_attributes.name" label={'Nombre'} />
+                        <Input
+                          name="person_attributes.name"
+                          label={'Nombre'}
+                          validate={mix(required())}
+                        />
                         <Input
                           name="person_attributes.lastname"
                           label={'Apellido'}
@@ -62,9 +67,9 @@ const Page = () => {
                           name="role_id"
                           label={'Rol'}
                           data={roleList}
+                          validate={mix(required())}
                         />
                         {/* <Input name="role_id" label={'Rol'}/> */}
-                        <Input name="person_attributes.email" label={'Email'} />
                         <Input
                           name="person_attributes.telephone"
                           label={'Telefono'}
@@ -73,14 +78,34 @@ const Page = () => {
                           name="person_attributes.cellphone"
                           label={'Celular'}
                         />
-                        <Input
+                        {/*<Input
                           name="branch_or_storage"
                           label={
                             'Seleciona la sucursal/almacen a donde sera asignado el usuario'
                           }
+                        />*/}
+                        {/*<Input name="print_mode" label={'Modo de Imprimir'} />*/}
+                        <SwitchField name="active" label={'Activo'} />
+                      </div>
+                      <h2>Datos de sesion</h2>
+                      <div className="grid gap-4 grid-cols-4 mb-4 bg-gray-200 p-4">
+                        <Input
+                          name="email"
+                          label={'Email'}
+                          validate={mix(required(), isEmail())}
                         />
-                        <Input name="print_mode" label={'Modo de Imprimir'} />
-                        <SwitchField name="active" label={'Activar'} />
+                        <Input
+                          name="password"
+                          type="password"
+                          label={'Contraseña'}
+                          validate={mix(required())}
+                        />
+                        <Input
+                          validate={mix(required())}
+                          name="re_password"
+                          type="password"
+                          label={'Confirmar contraseña'}
+                        />
                       </div>
                       <Button
                         type="submit"

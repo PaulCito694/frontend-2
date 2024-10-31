@@ -12,7 +12,7 @@ import { Form } from 'react-final-form'
 const Login = () => {
   const { login } = useAuth({
     middleware: 'guest',
-    redirectIfAuthenticated: '/dashboard',
+    redirectIfAuthenticated: '/new_sale',
   })
 
   return (
