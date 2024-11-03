@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useStatem, useState } from 'react'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
@@ -37,23 +37,11 @@ import useIdentityType from '@/hooks/useIdentityType'
 const Page = () => {
   const { findCustomerByDni, isLoading: isCustomerLoading} = useCustomers()
   const { identityTypeList, isLoading: isIdentityTypeLoading } = useIdentityType()
+  console.log(identityTypeList)
   const { productList, isLoading } = useProducts()
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const searchTextLower = searchText.toLowerCase()
-    setFilteredProducts(
-      productList?.filter(product =>
-        product.name?.toLowerCase()?.includes(searchTextLower),
-      ),
-    )
-  }, [searchText])
-
-  useEffect(() => {
-    setFilteredProducts(productList)
-  }, [productList])
 
   if (isLoading || isCustomerLoading || isIdentityTypeLoading) return <div>Cargando prro...</div>
 
@@ -87,7 +75,7 @@ const Page = () => {
                   }
                   return errors
                 }}
-                render={({ handleSubmit, form:{mutators:{change}} }) => (
+                render={({ handleSubmit,values, form:{mutators:{change}} }) => (
                   <form onSubmit={handleSubmit}>
                     <FieldArray name="sale_details_attributes">
                       {({ fields, meta: { error } }) => (
@@ -97,14 +85,14 @@ const Page = () => {
                             <Card>
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <SelectField 
-                                  name="customer_attributes.identity_type_id" 
+                                  name="customer.identity_type_id" 
                                   label={'Tipo de identidad'} 
                                   data={
                                     identityTypeList
                                   }
                                 />
                                 <Input
-                                  name="customer_attributes.person_attributes.dni"
+                                  name="customer.person_attributes.dni"
                                   label={'Nro de documento'}
                                 />
                                 <CustomerFields/>
@@ -216,10 +204,10 @@ const Page = () => {
                                             validate={mix(
                                               required(),
                                               isNumber(),
-                                              moreThan(
-                                                product.stock_quantity + 1,
-                                                'No puede vender mas de lo que se encuentra en stock.',
-                                              ),
+                                              // moreThan(
+                                              //   product.stock_quantity + 1,
+                                              //   'No puede vender mas de lo que se encuentra en stock.',
+                                              // ),
                                             )}
                                           />
                                         </TableCell>
@@ -275,9 +263,11 @@ const Page = () => {
                         </div>
                       )}
                     </FieldArray>
+                    <pre> {JSON.stringify(values, null, 2)}</pre>
                   </form>
                 )}
               />
+
             </div>
           </div>
         </div>

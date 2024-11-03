@@ -34,12 +34,18 @@ const useCustomers = () => {
         return customerList?.find(customer => customer.person_attributes.dni === dni) || null
     }
 
+    const findAsyncCustomer = dni =>
+      axios()
+      .get(`api/customers/find_customer?document_number=${dni}`)
+      .then(res => res.data)
+
     return {
         getCustomerById,
         customerList,
         isLoading,
         createCustomer,
         findCustomerByDni,
+        findAsyncCustomer,
     }
 }
 

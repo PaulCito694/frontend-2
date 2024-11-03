@@ -173,6 +173,7 @@ const Page = () => {
                     </form>      
                   )}
                 />
+                <pre> {JSON.stringify(roleList, null, 2)}</pre>
               </div>
             </div>
           </div>
