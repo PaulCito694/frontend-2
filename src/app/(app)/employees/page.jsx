@@ -26,7 +26,6 @@ const Page = () => {
     updateEmployeeById,
   } = useEmployees()
   const { roleList, isLoading: isRolesLoading } = useRoles()
-
   if (isEmployeeLoading || isRolesLoading) return <div>Cargandooo...</div>
   return (
     <div>
@@ -114,80 +113,67 @@ const Page = () => {
                         Crear Empleado
                       </Button>
                       <div className="overflow-x-auto">
-                        <Table className="mb-8" size="small">
-                          <TableHead>
-                            <TableRow
-                              className="bg-blue-500"
-                              onMouseUp={() => {}}>
-                              <TableCell align="center">Codigo</TableCell>
-                              <TableCell align="center" width={400}>
-                                Password
-                              </TableCell>
-                              <TableCell align="center">Nombre</TableCell>
-                              <TableCell align="center">Apellido</TableCell>
-                              <TableCell align="center">Email</TableCell>
-                              <TableCell align="center" width={100}>
-                                Telefono
-                              </TableCell>
-                              <TableCell align="center">Celular</TableCell>
-                              <TableCell align="center">
-                                Sucursal/Almacen
-                              </TableCell>
-                              <TableCell align="center">
-                                Modo de Imprimir
-                              </TableCell>
-                              <TableCell align="center">Activar</TableCell>
-                              <TableCell align="center">Acciones</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {employeeList?.map((employee, index) => {
-                              return (
-                                <TableRow className="flex" key={index}>
-                                  <TableCell>
-                                    {employee.person_attributes.codigo}
-                                  </TableCell>
-                                  <TableCell>{employee.password}</TableCell>
-                                  <TableCell>
-                                    {employee.person_attributes.name}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.person_attributes.lastname}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.person_attributes.email}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.person_attributes.telephone}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.person_attributes.cellphone}
-                                  </TableCell>
-                                  <TableCell>
-                                    {employee.branch_or_storage}
-                                  </TableCell>
-                                  <TableCell>{employee.print_mode}</TableCell>
-                                  <TableCell>
-                                    {employee.active ? 'activo' : 'desactivo'}
-                                  </TableCell>
-                                  <TableCell>
-                                    <IconButton
-                                      onClick={() => {
-                                        reset(employee)
-                                      }}
-                                      sx={{ padding: 0 }}>
-                                      <EditIcon />
-                                    </IconButton>
-                                  </TableCell>
-                                </TableRow>
-                              )
-                            })}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </form>
+                      <Table className="mb-8" size="small">
+                        <TableHead>
+                          <TableRow
+                            className="bg-blue-500"
+                            onMouseUp={() => {}}>
+                            <TableCell align="center">Codigo</TableCell>
+                            <TableCell align="center" width={400}>
+                              Password
+                            </TableCell>
+                            <TableCell align="center">Nombre</TableCell>
+                            <TableCell align="center">
+                              Apellido
+                            </TableCell>
+                            <TableCell align="center">
+                              Email
+                            </TableCell>
+                            <TableCell align="center" width={100}>
+                              Telefono
+                            </TableCell>
+                            <TableCell align="center">
+                              Celular
+                            </TableCell>
+                            <TableCell align="center">Sucursal/Almacen</TableCell>
+                            <TableCell align="center">Modo de Imprimir</TableCell> 
+                            <TableCell align="center">Activar</TableCell>
+                            <TableCell align="center">Acciones</TableCell>             
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {employeeList?.map((employee, index) => {
+                            return (
+                              <TableRow className="flex" key={index}>
+                                <TableCell>{employee.person_attributes.codigo}</TableCell>
+                                <TableCell>{employee.password}</TableCell>
+                                <TableCell>{employee.person_attributes.name}</TableCell>
+                                <TableCell>{employee.person_attributes.lastname}</TableCell>
+                                <TableCell>{employee.person_attributes.email}</TableCell>
+                                <TableCell>{employee.person_attributes.telephone}</TableCell>
+                                <TableCell>{employee.person_attributes.cellphone}</TableCell>
+                                <TableCell>{employee.branch_or_storage}</TableCell>
+                                <TableCell>{employee.print_mode}</TableCell>
+                                <TableCell>{employee.active ? "activo" : "desactivo"}</TableCell>
+                                <TableCell>
+                                  <IconButton
+                                    onClick={() => {
+                                      reset(employee)
+                                    }}
+                                    sx={{ padding: 0 }}>
+                                    <EditIcon />
+                                  </IconButton>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    </form>      
                   )}
                 />
+                <pre> {JSON.stringify(roleList, null, 2)}</pre>
               </div>
             </div>
           </div>

@@ -218,7 +218,7 @@ const Page = () => {
                                   {product.sale_price_ex_igv}
                                 </TableCell>
                                 <TableCell>{product.unit_of_measure}</TableCell>
-                                <TableCell>{product.initial_stok}</TableCell>
+                                <TableCell>{product.initial_stock}</TableCell>
                                 <TableCell>{product.min_stok}</TableCell>
                                 <TableCell>{product.purchase_price}</TableCell>
                                 <TableCell>{product.profit_max}</TableCell>
