@@ -12,22 +12,26 @@ import Input from '@/components/Input'
 import Pagination from '@/components/Pagination'
 
 const ProductsTable = ({ productList, fields }) => {
-  const [filteredProducts, setFilteredProducts] = useState(productList)
   const [searchText, setSearchText] = useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [filteredProducts, setFilteredProducts] = useState(
+    productList.slice(0, 10),
+  )
 
   useEffect(() => {
     const searchTextLower = searchText.toLowerCase()
     setFilteredProducts(
-      productList?.filter(product =>
-        product.name?.toLowerCase()?.includes(searchTextLower),
-      ),
+      productList
+        ?.filter(product =>
+          product.name?.toLowerCase()?.includes(searchTextLower),
+        )
+        .slice(0, rowsPerPage),
     )
   }, [searchText])
 
   useEffect(() => {
-    setFilteredProducts(productList)
+    setFilteredProducts(productList.slice(0, 10))
   }, [productList])
 
   const handleTableRowClick = product => {
@@ -54,7 +58,7 @@ const ProductsTable = ({ productList, fields }) => {
   }
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <h2 className="text-2xl mb-4">Listado de productos:</h2>
       <Input
         name="search"
@@ -101,10 +105,10 @@ const ProductsTable = ({ productList, fields }) => {
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sale_price_inc_igv}</TableCell>
                 <TableCell>{product.stock_quantity}</TableCell>
-                <TableCell>{product.lote}</TableCell>
+                <TableCell>{product.batch_register}</TableCell>
                 <TableCell>{product.expiration_date}</TableCell>
                 <TableCell>{product.location}</TableCell>
-                <TableCell>{product.Laboratory}</TableCell>
+                <TableCell>{product.laboratory}</TableCell>
               </TableRow>
             ))}
           </TableBody>

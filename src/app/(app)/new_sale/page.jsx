@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useStatem, useState } from 'react'
+import React, { useState } from 'react'
 import { Form } from 'react-final-form'
 import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
@@ -35,15 +35,18 @@ import CustomerFields from './components/CustomerField'
 import useIdentityType from '@/hooks/useIdentityType'
 
 const Page = () => {
-  const { findCustomerByDni, isLoading: isCustomerLoading} = useCustomers()
-  const { identityTypeList, isLoading: isIdentityTypeLoading } = useIdentityType()
-  console.log(identityTypeList)
+  const { isLoading: isCustomerLoading } = useCustomers()
+  const {
+    identityTypeList,
+    isLoading: isIdentityTypeLoading,
+  } = useIdentityType()
   const { productList, isLoading } = useProducts()
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  if (isLoading || isCustomerLoading || isIdentityTypeLoading) return <div>Cargando prro...</div>
+  if (isLoading || isCustomerLoading || isIdentityTypeLoading)
+    return <div>Cargando prro...</div>
 
   return (
     <>
@@ -75,27 +78,29 @@ const Page = () => {
                   }
                   return errors
                 }}
-                render={({ handleSubmit,values, form:{mutators:{change}} }) => (
+                render={({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
                     <FieldArray name="sale_details_attributes">
                       {({ fields, meta: { error } }) => (
-                        <div className="flex flex-col-2 justify-around items-start gap-4">
+                        <div className="flex flex-col justify-around items-start gap-4">
+                          <ProductsTable
+                            productList={productList}
+                            fields={fields}
+                          />
                           <div>
                             <h2 className="text-2xl mb-4">Nueva venta:</h2>
                             <Card>
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
-                                <SelectField 
-                                  name="customer.identity_type_id" 
-                                  label={'Tipo de identidad'} 
-                                  data={
-                                    identityTypeList
-                                  }
+                                <SelectField
+                                  name="customer.identity_type_id"
+                                  label={'Tipo de identidad'}
+                                  data={identityTypeList}
                                 />
                                 <Input
                                   name="customer.person_attributes.dni"
                                   label={'Nro de documento'}
                                 />
-                                <CustomerFields/>
+                                <CustomerFields />
                                 <SelectField
                                   name="state"
                                   label="Estado de pago"
@@ -256,17 +261,12 @@ const Page = () => {
                               <TotalField />
                             </Card>
                           </div>
-                          <ProductsTable
-                            productList={productList}
-                            fields={fields}
-                          />
                         </div>
                       )}
                     </FieldArray>
                   </form>
                 )}
               />
-
             </div>
           </div>
         </div>

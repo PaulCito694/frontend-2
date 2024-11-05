@@ -118,12 +118,12 @@ export const lessThan = (
   length,
   message = `No puede ser menor que ${length}.`,
 ) => value => {
-  return value && parseInt(value) <= parseInt(length) ? message : undefined
+  return value && parseFloat(value) <= parseFloat(length) ? message : undefined
 }
 
 export const moreThan = (
   length,
   message = `No puede ser mayor que ${length}.`,
 ) => value => {
-  return value && parseInt(value) >= parseInt(length) ? message : undefined
+  return value && parseFloat(value) >= parseFloat(length) ? message : undefined
 }

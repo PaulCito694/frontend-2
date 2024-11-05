@@ -196,7 +196,7 @@ const Page = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {productList?.map((product, index) => {
+                          {productList?.slice(0, 10)?.map((product, index) => {
                             return (
                               <TableRow className="flex" key={index}>
                                 <TableCell>{product.code}</TableCell>
