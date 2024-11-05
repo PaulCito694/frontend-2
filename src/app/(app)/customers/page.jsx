@@ -44,7 +44,6 @@ const Page = () => {
             </form>
           )}
         />
-        <pre> {JSON.stringify(customerList, null, 2)}</pre>
       </div>
     </div>
   )

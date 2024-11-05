@@ -204,10 +204,10 @@ const Page = () => {
                                             validate={mix(
                                               required(),
                                               isNumber(),
-                                              // moreThan(
-                                              //   product.stock_quantity + 1,
-                                              //   'No puede vender mas de lo que se encuentra en stock.',
-                                              // ),
+                                              moreThan(
+                                                product.stock_quantity + 1,
+                                                'No puede vender mas de lo que se encuentra en stock.',
+                                              ),
                                             )}
                                           />
                                         </TableCell>
@@ -263,7 +263,6 @@ const Page = () => {
                         </div>
                       )}
                     </FieldArray>
-                    <pre> {JSON.stringify(values, null, 2)}</pre>
                   </form>
                 )}
               />

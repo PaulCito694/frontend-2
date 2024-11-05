@@ -38,12 +38,12 @@ const CustomerFields = () => {
   return (
     <span className="bg-green-300 p-2 mb-4 flex gap-4">
       <Input 
-        // parentClassName="hidden"
+        parentClassName="hidden"
         name="customer.id"
         label={'id'}
       />
       <Input 
-        // parentClassName="hidden"
+        parentClassName="hidden"
         name="customer.person_attributes.id"
         label={'id'}
       />
