@@ -14,9 +14,11 @@ import moment from 'moment'
 import Button from '@/components/Button'
 import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
 import { mix, required } from '@/utils/validations'
+import useEmployees from '@/hooks/useEmployees'
 
 const Page = () => {
   const { saleList, trigger } = useSales()
+  const { employeeList } = useEmployees()
 
   const generateInvoiceTicket = sale => {
     const totalHeight = 140 + sale.sale_details.length * 5
@@ -163,12 +165,10 @@ const Page = () => {
                       className="w-56"
                       name="employee_id"
                       label="Empleado"
-                      data={[
-                        {
-                          id: 1,
-                          name: 'Liliana', //TODO: jalar de users
-                        },
-                      ]}
+                      data={employeeList?.map(employee => ({
+                        id: employee.id,
+                        name: employee.person_attributes?.name,
+                      }))}
                       validate={mix(required())}
                     />
                     <DatePickerField name="from" label="Desde" />
