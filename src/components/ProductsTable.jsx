@@ -12,23 +12,37 @@ import Input from '@/components/Input'
 import Pagination from '@/components/Pagination'
 
 const ProductsTable = ({ productList, fields }) => {
-  const [searchText, setSearchText] = useState('')
+  const [searchNameOrComponent, setSearchNameOrComponent] = useState('')
+  const [searchBarCode, setSearchBarCode] = useState('')
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [rowsPerPage, setRowsPerPage] = React.useState(50)
   const [filteredProducts, setFilteredProducts] = useState(
     productList.slice(0, 10),
   )
 
   useEffect(() => {
-    const searchTextLower = searchText.toLowerCase()
-    setFilteredProducts(
-      productList
-        ?.filter(product =>
-          product.name?.toLowerCase()?.includes(searchTextLower),
-        )
-        .slice(0, rowsPerPage),
-    )
-  }, [searchText])
+    if (searchNameOrComponent?.trim()?.length > 0)
+      setFilteredProducts(
+        productList
+          ?.filter(
+            product =>
+              product.name?.toUpperCase()?.includes(searchNameOrComponent) ||
+              product.component?.toUpperCase()?.includes(searchNameOrComponent),
+          )
+          .slice(0, rowsPerPage),
+      )
+  }, [searchNameOrComponent])
+
+  useEffect(() => {
+    if (searchBarCode?.trim()?.length > 0)
+      setFilteredProducts(
+        productList
+          ?.filter(product =>
+            product.code?.toUpperCase()?.includes(searchBarCode),
+          )
+          .slice(0, rowsPerPage),
+      )
+  }, [searchBarCode])
 
   useEffect(() => {
     setFilteredProducts(productList.slice(0, 10))
@@ -60,12 +74,20 @@ const ProductsTable = ({ productList, fields }) => {
   return (
     <div className="overflow-x-auto">
       <h2 className="text-2xl mb-4">Listado de productos:</h2>
-      <Input
-        name="search"
-        label="Buscar"
-        onChange={setSearchText}
-        parentClassName="mb-4"
-      />
+      <div className="flex justify-between gap-4">
+        <Input
+          name="codeSearch"
+          label="Buscar por nombre o componente"
+          onChange={setSearchNameOrComponent}
+          parentClassName="mb-4 w-full"
+        />
+        <Input
+          name="nameSearch"
+          label="Buscar por codigo de barras"
+          onChange={setSearchBarCode}
+          parentClassName="mb-4 w-full"
+        />
+      </div>
       <Card>
         <Table size="small">
           <TableHead>
@@ -79,6 +101,9 @@ const ProductsTable = ({ productList, fields }) => {
               </TableCell>
               <TableCell sx={{ fontWeight: 800 }} align="right">
                 Lote
+              </TableCell>
+              <TableCell sx={{ fontWeight: 800 }} align="right">
+                Componente
               </TableCell>
               <TableCell sx={{ fontWeight: 800 }} align="right">
                 F. V.
@@ -106,6 +131,7 @@ const ProductsTable = ({ productList, fields }) => {
                 <TableCell>{product.sale_price_inc_igv}</TableCell>
                 <TableCell>{product.stock_quantity}</TableCell>
                 <TableCell>{product.batch_register}</TableCell>
+                <TableCell>{product.component}</TableCell>
                 <TableCell>{product.expiration_date}</TableCell>
                 <TableCell>{product.location}</TableCell>
                 <TableCell>{product.laboratory}</TableCell>

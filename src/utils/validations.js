@@ -62,6 +62,13 @@ export const isNumber = (message = 'Solo se permiten números.') => value => {
   return value ? (NUMBER_REGEX.test(value) ? undefined : message) : undefined
 }
 
+export const isInteger = (
+  message = 'Solo se permiten números enteros.',
+) => value => {
+  const NUMBER_REGEX = /^-?\d+$/
+  return value ? (NUMBER_REGEX.test(value) ? undefined : message) : undefined
+}
+
 export const isAlphanumeric = (
   message = 'Solo se permiten letras y números.',
 ) => value => {
@@ -118,7 +125,7 @@ export const lessThan = (
   length,
   message = `No puede ser menor que ${length}.`,
 ) => value => {
-  return value && parseFloat(value) <= parseFloat(length) ? message : undefined
+  return value && parseFloat(value) < parseFloat(length) ? message : undefined
 }
 
 export const moreThan = (

@@ -3,143 +3,19 @@
 import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import useSales from '@/hooks/useSales'
-import jsPDF from 'jspdf'
-import PictureAsPdf from '@mui/icons-material/PictureAsPdf'
 import ReceiptIcon from '@mui/icons-material/Receipt'
-import { numberToLetters } from '@/utils/number_to_letters'
 import { Form } from 'react-final-form'
 import DatePickerField from '@/components/DatePickerField'
 import SelectField from '@/components/SelectField'
 import moment from 'moment'
 import Button from '@/components/Button'
-import { saleKindTransduction, saleStateTransduction } from '@/utils/helpers'
 import { mix, required } from '@/utils/validations'
 import useEmployees from '@/hooks/useEmployees'
+import { generateSalesResumeTicket } from '@/utils/pdf'
 
 const Page = () => {
   const { saleList, trigger } = useSales()
   const { employeeList } = useEmployees()
-
-  const generateInvoiceTicket = sale => {
-    const totalHeight = 140 + sale.sale_details.length * 5
-    const doc = new jsPDF({
-      orientation: 'p',
-      unit: 'mm',
-      format: [80, totalHeight],
-    })
-    doc.setFontSize(8)
-    doc.text('SERVICIOS QHALIFARMA S.C.R.L', 40, 5, { align: 'center' })
-    doc.setFont('helvetica', 'normal')
-    doc.text('AV. ANTONIO RAIMONDI NRO. 864 HUANUCO', 40, 10, {
-      align: 'center',
-    })
-    doc.text('LEONCIO PRADO - RUPA-RUPA', 40, 15, { align: 'center' })
-    doc.setFontSize(7)
-    doc.text('Telf.: 987045222', 40, 20, { align: 'center' })
-    doc.text('Boticasqfsrl@gmail.com', 40, 25, { align: 'center' })
-    doc.line(2, 27, 78, 27, 'DF')
-
-    doc.setFontSize(8)
-    doc.text('BOLETA ELECTRÓNICA', 40, 30, { align: 'center' })
-    doc.text(sale.invoice?.toString() || '', 40, 35, { align: 'center' })
-    doc.text(`Fecha de Emisión: ${sale.date}`, 2, 40)
-    doc.text(`Señor (es): ${sale.date}`, 2, 45)
-    doc.text(`D.N.I.: ${sale.date}`, 2, 50)
-    doc.text(`Direc.: ${sale.customer?.address || '-'}`, 2, 55)
-    doc.text(`Forma de Pago: Contado`, 2, 60)
-    doc.line(2, 62, 78, 62, 'DF')
-    doc.text(`Cant.`, 2, 65)
-    doc.text(`Descripción`, 10, 65)
-    doc.text(`P.U.`, 58, 65)
-    doc.text(`Importe`, 68, 65)
-    doc.line(2, 67, 78, 67, 'DF')
-    let startSaleDetailY = 70
-    let partialY = 0
-    const YDif = 4
-    sale.sale_details.map((sale_detail, index) => {
-      partialY = startSaleDetailY + index * YDif
-      doc.text(sale_detail.quantity?.toString() || ' - ', 2, partialY)
-      doc.text(sale_detail.product.name?.toString() || ' - ', 10, partialY)
-      doc.text(sale_detail.price?.toString() || ' - ', 58, partialY)
-      doc.text(sale_detail.sub_total?.toString() || ' - ', 68, partialY)
-    })
-    doc.line(2, partialY + 2, 78, partialY + 2)
-    doc.setFontSize(9)
-    doc.text(`Exonerado:`, 61, partialY + 5, { align: 'right' })
-    doc.text(`Total a Pagar:`, 61, partialY + 10, { align: 'right' })
-    doc.text(`Recibido:`, 61, partialY + 15, { align: 'right' })
-    doc.text(`Vuelto:`, 61, partialY + 20, { align: 'right' })
-    doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 5)
-    doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 10)
-    doc.text(
-      `S/. ${sale.received_amount?.toString() || '-'}`,
-      64,
-      partialY + 15,
-    )
-    doc.text(`S/. ${sale.change_amount?.toString() || '-'}`, 64, partialY + 20)
-    doc.line(2, partialY + 22, 78, partialY + 22)
-    doc.setFontSize(7)
-    doc.text(numberToLetters(sale.total)?.toString(), 2, partialY + 25)
-    doc.addImage('../qr.png', 'PNG', 20, partialY + 27, 40, 40)
-    doc.line(2, partialY + 69, 78, partialY + 69)
-    doc.output('pdfobjectnewwindow')
-  }
-
-  const generateSalesResumeTicket = () => {
-    const totalHeight = 120 + saleList?.resume?.total_sale_details * 5
-    const doc = new jsPDF({
-      orientation: 'p',
-      unit: 'mm',
-      format: [80, totalHeight],
-    })
-    doc.setFontSize(8)
-    doc.text('SERVICIOS QHALIFARMA S.C.R.L', 40, 5, { align: 'center' })
-    doc.text('Resumen de caja chica', 40, 10, { align: 'center' })
-    doc.text(
-      `Trabajador(a): ${saleList?.resume?.employee?.first_name} ${saleList?.resume?.employee?.last_name}`,
-      2,
-      15,
-    )
-    doc.text(
-      `Fechas: Desde ${saleList?.resume?.from} hasta ${saleList?.resume?.to}`,
-      2,
-      20,
-    )
-    doc.text(`Total: S/. ${saleList?.resume?.sum_total || 0}`, 2, 25)
-    doc.setFontSize(9)
-    doc.text('Reporte de ventas', 40, 30, { align: 'center' })
-    doc.setFontSize(8)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Nro.', 2, 35)
-    doc.text('Producto', 14, 35)
-    doc.text('Cantidad', 42, 35)
-    doc.text('P. Unit', 58, 35)
-    doc.text('Total', 70, 35)
-
-    doc.setFont('helvetica', 'normal')
-
-    let startSaleDetailY = 40
-    let partialY = startSaleDetailY
-    const YDif = 4
-    let count = 1
-    saleList?.results?.forEach(sale => {
-      sale.sale_details.forEach(saleDetail => {
-        const splitText = doc.splitTextToSize(
-          saleDetail.product?.name?.toString() || '',
-          30,
-        )
-        doc.text(count.toString(), 2, partialY)
-        doc.text(10, partialY, splitText)
-        doc.text(saleDetail.quantity?.toString() || '', 42, partialY)
-        doc.text(saleDetail.price?.toString() || '', 58, partialY)
-        doc.text(saleDetail.sub_total?.toString() || '', 70, partialY)
-        partialY = partialY + splitText.length * YDif
-        count += 1
-      })
-    })
-
-    doc.output('pdfobjectnewwindow')
-  }
 
   return (
     <>
@@ -192,8 +68,7 @@ const Page = () => {
                   <div className="flex">
                     <h3 className=" mr-2">Ventas de: </h3>
                     <span className="font-bold">
-                      {saleList?.resume?.employee?.first_name}{' '}
-                      {saleList?.resume?.employee?.last_name}
+                      {saleList?.resume?.employee?.name}
                     </span>
                   </div>
                   <div className="flex">
@@ -212,56 +87,41 @@ const Page = () => {
                   <TableHead>
                     <TableRow className="bg-yellow-500">
                       <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
-                        Fecha
+                        Codigo
                       </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>Nombre</TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>Categoria</TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>
-                        Comprobante
+                        Cantidad vendida
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>Cliente</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        Estado de pago
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        Tipo de venta
-                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>P. Venta</TableCell>
                       <TableCell sx={{ fontWeight: 800 }}>Total</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>
-                        Comprobante
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>Ticket</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {saleList?.results?.map((sale, index) => (
-                      <TableRow
-                        className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
-                        key={index}
-                        sx={{
-                          '&:last-child td, &:last-child th': {
-                            border: 0,
-                          },
-                        }}>
-                        <TableCell align="left">{sale.date}</TableCell>
-                        <TableCell component="th" scope="row">
-                          {sale.invoice}
-                        </TableCell>
-                        <TableCell>{sale.customer?.document_number}</TableCell>
-                        <TableCell>
-                          {saleStateTransduction(sale.state)}
-                        </TableCell>
-                        <TableCell>{saleKindTransduction(sale.kind)}</TableCell>
-                        <TableCell>S/. {sale.total}</TableCell>
-                        <TableCell>
-                          <PictureAsPdf className="cursor-pointer" />
-                        </TableCell>
-                        <TableCell>
-                          <ReceiptIcon
-                            onClick={() => generateInvoiceTicket(sale)}
-                            className="cursor-pointer"
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {saleList?.results?.map((sale, index) =>
+                      sale.sale_details?.map(detail => (
+                        <TableRow
+                          className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
+                          key={index}
+                          sx={{
+                            '&:last-child td, &:last-child th': {
+                              border: 0,
+                            },
+                          }}>
+                          <TableCell align="left">
+                            {detail.product.code}
+                          </TableCell>
+                          <TableCell component="th" scope="row">
+                            {detail.product.name}
+                          </TableCell>
+                          <TableCell>{detail.product?.category.name}</TableCell>
+                          <TableCell>{detail.quantity}</TableCell>
+                          <TableCell>{detail.price}</TableCell>
+                          <TableCell>S/. {detail.sub_total}</TableCell>
+                        </TableRow>
+                      )),
+                    )}
                   </TableBody>
                 </Table>
               </div>
@@ -337,7 +197,7 @@ const Page = () => {
                 <div>
                   Imprimir
                   <ReceiptIcon
-                    onClick={() => generateSalesResumeTicket()}
+                    onClick={() => generateSalesResumeTicket(saleList)}
                     className="cursor-pointer"
                   />
                 </div>

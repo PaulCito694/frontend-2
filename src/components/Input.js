@@ -24,7 +24,16 @@ const TextFieldField = ({
   const {
     input,
     meta: { error, touched },
-  } = useField(name, { validate, initialValue })
+  } = useField(name, {
+    validate,
+    initialValue,
+    format: value => {
+      if (typeof value === 'string') {
+        return value.toUpperCase()
+      }
+      return value
+    },
+  })
 
   return (
     <div className={clsx('grid', parentClassName)}>

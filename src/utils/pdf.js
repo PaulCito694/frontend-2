@@ -154,10 +154,10 @@ export const generateInvoiceTicket = sale => {
   doc.text('BOLETA ELECTRÓNICA', 40, 30, { align: 'center' })
   doc.text(sale.invoice?.toString() || '', 40, 35, { align: 'center' })
   doc.text(`Fecha de Emisión: ${sale.date}`, 2, 40)
-  doc.text(`Señor (es): ${sale.customer?.name}`, 2, 45)
+  doc.text(`Señor (es): ${sale.customer?.name || '-'}`, 2, 45)
   doc.text(`D.N.I.: ${sale.customer?.dni}`, 2, 50)
   doc.text(`Direc.: ${sale.customer?.address || '-'}`, 2, 55)
-  doc.text(`Forma de Pago: Contado`, 2, 60)
+  doc.text(`Vendedor: ${sale.employee?.name}`, 2, 60)
   doc.line(2, 62, 78, 62, 'DF')
   doc.text(`Cant.`, 2, 65)
   doc.text(`Descripción`, 10, 65)
@@ -189,5 +189,57 @@ export const generateInvoiceTicket = sale => {
   doc.text(numberToLetters(sale.total)?.toString(), 2, partialY + 25)
   doc.addImage('../qr.png', 'PNG', 20, partialY + 27, 40, 40)
   doc.line(2, partialY + 69, 78, partialY + 69)
+  doc.output('pdfobjectnewwindow')
+}
+
+export const generateSalesResumeTicket = saleList => {
+  const totalHeight = 120 + saleList?.resume?.total_sale_details * 5
+  const doc = new jsPDF({
+    orientation: 'p',
+    unit: 'mm',
+    format: [80, totalHeight],
+  })
+  doc.setFontSize(8)
+  doc.text('SERVICIOS QHALIFARMA S.C.R.L', 40, 5, { align: 'center' })
+  doc.text('Resumen de caja chica', 40, 10, { align: 'center' })
+  doc.text(`Trabajador(a): ${saleList?.resume?.employee?.name}`, 2, 15)
+  doc.text(
+    `Fechas: Desde ${saleList?.resume?.from} hasta ${saleList?.resume?.to}`,
+    2,
+    20,
+  )
+  doc.text(`Total: S/. ${saleList?.resume?.sum_total || 0}`, 2, 25)
+  doc.setFontSize(9)
+  doc.text('Reporte de ventas', 40, 30, { align: 'center' })
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Nro.', 2, 35)
+  doc.text('Producto', 14, 35)
+  doc.text('Cantidad', 42, 35)
+  doc.text('P. Unit', 58, 35)
+  doc.text('Total', 70, 35)
+
+  doc.setFont('helvetica', 'normal')
+
+  let startSaleDetailY = 40
+  let partialY = startSaleDetailY
+  const YDif = 4
+  let count = 1
+  saleList?.results?.forEach(sale => {
+    sale.sale_details.forEach(saleDetail => {
+      const splitText = doc.splitTextToSize(
+        saleDetail.product?.name?.toString() || '',
+        30,
+      )
+      doc.text(count.toString(), 2, partialY)
+      doc.text(10, partialY, splitText)
+      doc.text(saleDetail.quantity?.toString() || '', 42, partialY)
+      doc.text(saleDetail.price?.toString() || '', 58, partialY)
+      doc.text(saleDetail.sub_total?.toString() || '', 70, partialY)
+      partialY = partialY + splitText.length * YDif
+      count += 1
+    })
+  })
+
   doc.output('pdfobjectnewwindow')
 }

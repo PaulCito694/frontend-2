@@ -22,8 +22,8 @@ import useSales from '@/hooks/useSales'
 import { useRouter } from 'next/navigation'
 import RemoveCircle from '@mui/icons-material/RemoveCircle'
 import SelectField from '@/components/SelectField'
-import ProductsTable from '@/components/ProductsTable'
 import {
+  isInteger,
   isNumber,
   lessThan,
   mix,
@@ -33,6 +33,8 @@ import {
 import useCustomers from '@/hooks/useCustomers'
 import CustomerFields from './components/CustomerField'
 import useIdentityType from '@/hooks/useIdentityType'
+import ProductsDialog from '@/components/ProductsDialog'
+import SearchIcon from '@mui/icons-material/Search'
 
 const Page = () => {
   const { isLoading: isCustomerLoading } = useCustomers()
@@ -44,6 +46,7 @@ const Page = () => {
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [showProductsDialog, setShowProductsDialog] = useState(false)
 
   if (isLoading || isCustomerLoading || isIdentityTypeLoading)
     return <div>Cargando prro...</div>
@@ -79,16 +82,32 @@ const Page = () => {
                   return errors
                 }}
                 render={({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit}>
+                  <form
+                    onSubmit={handleSubmit}
+                    onKeyPress={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                      }
+                    }}>
                     <FieldArray name="sale_details_attributes">
                       {({ fields, meta: { error } }) => (
                         <div className="flex flex-col justify-around items-start gap-4">
-                          <ProductsTable
-                            productList={productList}
-                            fields={fields}
-                          />
+                          {showProductsDialog && (
+                            <ProductsDialog
+                              productList={productList}
+                              fields={fields}
+                              handleClose={() => setShowProductsDialog(false)}
+                            />
+                          )}
                           <div>
-                            <h2 className="text-2xl mb-4">Nueva venta:</h2>
+                            <div className="flex gap-4">
+                              <h2 className="text-2xl mb-4">Nueva venta:</h2>
+                              <Button
+                                onClick={() => setShowProductsDialog(true)}>
+                                Seleccionar productos{' '}
+                                <SearchIcon className="ml-4" />
+                              </Button>
+                            </div>
                             <Card>
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <SelectField
@@ -152,15 +171,12 @@ const Page = () => {
                                       Producto (Lote)
                                     </TableCell>
                                     <TableCell align="center">
-                                      Laboratorio
-                                    </TableCell>
-                                    <TableCell align="center">U_M</TableCell>
-                                    <TableCell align="center">
                                       Ubicacion
                                     </TableCell>
                                     <TableCell align="center">
-                                      Fecha de vencimiento
+                                      Laboratorio
                                     </TableCell>
+                                    <TableCell align="center">U_M</TableCell>
                                     <TableCell align="center">Stock</TableCell>
                                     <TableCell align="center">
                                       Cantidad
@@ -189,40 +205,43 @@ const Page = () => {
                                           />
                                         </TableCell>
                                         <TableCell>
+                                          {product.location}
+                                        </TableCell>
+                                        <TableCell>
                                           {product.laboratory}
                                         </TableCell>
                                         <TableCell>
                                           {product.unid_med}
                                         </TableCell>
                                         <TableCell>
-                                          {product.location}
-                                        </TableCell>
-                                        <TableCell>
-                                          {product.expiration_date}
-                                        </TableCell>
-                                        <TableCell>
                                           {product.stock_quantity}
                                         </TableCell>
                                         <TableCell>
                                           <Input
+                                            type="number"
                                             name={`sale_details_attributes[${index}].quantity`}
                                             validate={mix(
                                               required(),
-                                              isNumber(),
+                                              isInteger(),
                                               moreThan(
                                                 product.stock_quantity + 1,
                                                 'No puede vender mas de lo que se encuentra en stock.',
                                               ),
+                                              lessThan(1),
                                             )}
                                           />
                                         </TableCell>
                                         <TableCell>
                                           <Input
+                                            type="number"
                                             name={`sale_details_attributes[${index}].price`}
                                             validate={mix(
                                               required(),
                                               isNumber(),
-                                              lessThan(0),
+                                              lessThan(
+                                                product.sale_price_inc_igv,
+                                                'No puede vender a un precio menor del establecido.',
+                                              ),
                                             )}
                                           />
                                         </TableCell>
@@ -255,7 +274,7 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
-                              {error && (
+                              {!Array.isArray(error) && (
                                 <span className="text-red-500">{error}</span>
                               )}
                               <TotalField />

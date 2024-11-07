@@ -25,20 +25,23 @@ import LabelField from '@/components/LabelField'
 import DatePickerField from '@/components/DatePickerField'
 import usePurchase from '@/hooks/usePurchase'
 import SelectField from '@/components/SelectField'
-import ProductsTable from '@/components/ProductsTable'
 import { generateInventoryXLSX } from '@/utils/xlsx'
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import Pagination from '@/components/Pagination'
 import ShowProductsDialog from '@/components/ShowProductsDialog'
 import {
+  isAlphanumeric,
   isLetter,
   isNumber,
   length,
   lessThan,
   mix,
   required,
+  isInteger,
 } from '@/utils/validations'
+import ProductsDialog from '@/components/ProductsDialog'
+import SearchIcon from '@mui/icons-material/Search'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
@@ -48,6 +51,7 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0)
   const [selectedPurchase, setSelectedPurchase] = useState(null)
+  const [showProductsDialog, setShowProductsDialog] = useState(false)
 
   useEffect(() => {
     trigger()
@@ -116,15 +120,22 @@ const Page = () => {
                       {({ fields, meta: { error } }) => (
                         <div className="flex flex-col-2 justify-around items-start gap-4">
                           <div>
-                            <h2 className="text-2xl mb-4">
-                              Ingreso/actualizacion de productos:
-                            </h2>
+                            <div className="flex gap-4">
+                              <h2 className="text-2xl mb-4">
+                                Ingreso/actualizacion de productos:
+                              </h2>
+                              <Button
+                                onClick={() => setShowProductsDialog(true)}>
+                                Seleccionar productos{' '}
+                                <SearchIcon className="ml-4" />
+                              </Button>
+                            </div>
                             <Card>
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <Input
                                   name="document_number"
                                   label={'Numero de documento'}
-                                  validate={mix(required(), isNumber())}
+                                  validate={mix(required(), isAlphanumeric())}
                                 />
                                 <DatePickerField name="date" label={'Fecha'} />
                                 <Input
@@ -197,6 +208,9 @@ const Page = () => {
                                     <TableCell align="center" width={100}>
                                       Nuevo Precio
                                     </TableCell>
+                                    <TableCell align="center" width={100}>
+                                      Precio de compra
+                                    </TableCell>
                                     <TableCell align="center">Quitar</TableCell>
                                   </TableRow>
                                 </TableHead>
@@ -241,6 +255,7 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           <Input
+                                            type="number"
                                             name={`purchase_details_attributes[${index}].quantity`}
                                             onChange={value => {
                                               const initialStockField = getFieldState(
@@ -258,7 +273,7 @@ const Page = () => {
                                             }}
                                             validate={mix(
                                               required(),
-                                              isNumber(),
+                                              isInteger(),
                                             )}
                                           />
                                         </TableCell>
@@ -279,11 +294,21 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           <Input
+                                            type="number"
                                             initialValue={product.price}
                                             name={`purchase_details_attributes[${index}].last_price`}
                                             validate={mix(
                                               required(),
                                               isNumber(),
+                                              lessThan(0),
+                                            )}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
+                                          <Input
+                                            name={`purchase_details_attributes[${index}].purchase_price`}
+                                            validate={mix(
+                                              required(),
                                               lessThan(0),
                                             )}
                                           />
@@ -311,15 +336,18 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
-                              {error && (
+                              {!Array.isArray(error) && (
                                 <span className="text-red-500">{error}</span>
                               )}
                             </Card>
                           </div>
-                          <ProductsTable
-                            productList={productList}
-                            fields={fields}
-                          />
+                          {showProductsDialog && (
+                            <ProductsDialog
+                              productList={productList}
+                              fields={fields}
+                              handleClose={() => setShowProductsDialog(false)}
+                            />
+                          )}
                         </div>
                       )}
                     </FieldArray>

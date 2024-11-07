@@ -65,18 +65,18 @@ const Navigation = ({ user }) => {
               </NavLink>
               {isAdmin && (
                 <NavLink
-                  href="/products"
-                  active={usePathname() === '/products'}>
-                  <VaccinesIcon />
-                  Productos
-                </NavLink>
-              )}
-              {isAdmin && (
-                <NavLink
                   href="/inventory"
                   active={usePathname() === '/inventory'}>
                   <InventoryIcon />
                   Inventario
+                </NavLink>
+              )}
+              {isAdmin && (
+                <NavLink
+                  href="/products"
+                  active={usePathname() === '/products'}>
+                  <VaccinesIcon />
+                  Productos
                 </NavLink>
               )}
               {isAdmin && (
