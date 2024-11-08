@@ -28,9 +28,18 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
 import { generateSalesXLSX } from '@/utils/xlsx'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
+import Input from '@/components/Input';
+import { Form } from 'react-final-form'
+import SelectField from '@/components/SelectField'
+import DatePickerField from '@/components/DatePickerField'
+import moment from 'moment'
+import { mix, required } from '@/utils/validations'
+import useCustomers from '@/hooks/useCustomers'
+import { useField } from 'react-final-form'
 
 const Page = () => {
   const { saleList, isMutating, trigger, cancel } = useSales()
+  const { findCustomerByDni } = useCustomers()
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [selectedSale, setSelectedSale] = useState(null)
@@ -59,7 +68,73 @@ const Page = () => {
         <div className="max-w-9xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
-              <div className="flex gap-4">
+              <div className="grid gap-4">
+                <Form
+                  onSubmit={async values => {
+                    const customer = await findCustomerByDni(values.customer_dni)
+                    let queryParams = `date_lteq=${moment(values.to).format('YYYY-MM-DD')}&date_gteq=${moment(values.from).format('YYYY-MM-DD')}`;
+                    if (values.state) {
+                      queryParams += `&state_eq=${values.state}`;
+                    }
+                    
+                    if (values.kind) {
+                      queryParams += `&kind_eq=${values.kind}`;
+                    }
+                    
+                    if (customer && customer.customer_id) {
+                      queryParams += `&customer_id_eq=${customer.customer_id}`;
+                    }
+                    trigger(queryParams)
+                  }}
+                  render={({ handleSubmit, submitting }) => (
+                    <form
+                      onSubmit={handleSubmit}
+                      className="flex justify-start gap-4">                      
+                      <SelectField
+                        name="kind"
+                        label="Tipo de venta"
+                        data={[
+                          {
+                            id: 'sales_note',
+                            name: 'Nota de venta',
+                          },
+                          {
+                            id: 'receipt',
+                            name: 'Boleta',
+                          },
+                          {
+                            id: 'invoice',
+                            name: 'Factura',
+                          },
+                        ]}
+                      />
+                      <SelectField
+                        name="state"
+                        label="Estado de pago"
+                        data={[
+                          {
+                            id: 'payed',
+                            name: 'Pagado',
+                          },
+                          {
+                            id: 'pending_payment',
+                            name: 'Pendiente de pago',
+                          },
+                        ]}
+                      />
+                      <Input
+                        className="w-56"
+                        name="customer_dni"
+                        label="DNI del Cliente"
+                      />
+                      <DatePickerField name="from" label="Desde" />
+                      <DatePickerField name="to" label="Hasta" />
+                      <Button type="submit" disabled={submitting}>
+                        Buscar
+                      </Button>
+                    </form>                    
+                  )}                
+                />
                 <Button
                   onClick={() => generateSalesXLSX(saleList)}
                   className="mb-4">
@@ -114,7 +189,7 @@ const Page = () => {
                           {sale.invoice}
                         </TableCell>
                         <TableCell align="left">{sale.date}</TableCell>
-                        <TableCell>{sale.customer?.document_number}</TableCell>
+                        <TableCell>{sale.customer?.dni}</TableCell>
                         <TableCell>
                           {saleStateTransduction(sale.state)}
                         </TableCell>

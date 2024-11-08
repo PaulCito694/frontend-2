@@ -13,24 +13,12 @@ const CustomerFields = () => {
       const foundCustomer = findCustomerByDni(dni.value)
       console.log(foundCustomer)
       if (foundCustomer && foundCustomer.customer_id) {
-        mutators.change(
-          'customer.person_attributes.email',
-          foundCustomer.person_attributes.email,
-        )
-        mutators.change(
-          'customer.person_attributes.name',
-          foundCustomer.person_attributes.name,
-        )
-        mutators.change(
-          'customer.person_attributes.telephone',
-          foundCustomer.person_attributes.telephone,
-        )
+        mutators.change('customer.person_attributes.email',foundCustomer.person_attributes.email)
+        mutators.change('customer.person_attributes.name',foundCustomer.person_attributes.name)
+        mutators.change('customer.person_attributes.telephone',foundCustomer.person_attributes.telephone)
         mutators.change('customer.tax_address', foundCustomer.tax_address)
         mutators.change('customer.id', foundCustomer.customer_id)
-        mutators.change(
-          'customer.person_attributes.id',
-          foundCustomer.person_attributes.id,
-        )
+        mutators.change('customer.person_attributes.id',foundCustomer.person_attributes.id)
       } else {
         findAsyncCustomer(dni.value).then(data => {
           mutators.change('customer.id', null)
@@ -49,7 +37,11 @@ const CustomerFields = () => {
 
   return (
     <span className="bg-green-300 p-2 mb-4 flex gap-4">
-      <Input parentClassName="hidden" name="customer.id" label={'id'} />
+      <Input 
+        parentClassName="hidden" 
+        name="customer.id" 
+        label={'id'} 
+      />
       <Input
         parentClassName="hidden"
         name="customer.person_attributes.id"
