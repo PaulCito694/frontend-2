@@ -81,7 +81,7 @@ const Page = () => {
                   }
                   return errors
                 }}
-                render={({ handleSubmit }) => (
+                render={({ handleSubmit, form: { change } }) => (
                   <form
                     onSubmit={handleSubmit}
                     onKeyPress={e => {
@@ -176,7 +176,9 @@ const Page = () => {
                                     <TableCell align="center">
                                       Laboratorio
                                     </TableCell>
-                                    <TableCell align="center">U_M</TableCell>
+                                    <TableCell align="center">
+                                      Unidad de medida
+                                    </TableCell>
                                     <TableCell align="center">Stock</TableCell>
                                     <TableCell align="center">
                                       Cantidad
@@ -211,7 +213,51 @@ const Page = () => {
                                           {product.laboratory}
                                         </TableCell>
                                         <TableCell>
-                                          {product.unid_med}
+                                          <Input
+                                            name={`sale_details_attributes[${index}].unit_of_measure_product_id`}
+                                            parentClassName="hidden"
+                                          />
+                                          <SelectField
+                                            name={`sale_details_attributes[${index}].unit_of_measure_product_value`}
+                                            data={[
+                                              {
+                                                id: 'unit',
+                                                name: 'UNIDAD',
+                                              },
+                                              ...product.unit_of_measure_products.map(
+                                                item => ({
+                                                  id: item.id,
+                                                  name: `${item.name} (${item.quantity})`,
+                                                }),
+                                              ),
+                                            ]}
+                                            initialValue={'unit'}
+                                            onChange={value => {
+                                              const unit_of_measure = product.unit_of_measure_products.find(
+                                                item => item.id === value,
+                                              )
+                                              if (unit_of_measure) {
+                                                change(
+                                                  `sale_details_attributes[${index}].price`,
+                                                  unit_of_measure.price,
+                                                )
+                                                change(
+                                                  `sale_details_attributes[${index}].unit_of_measure_product_id`,
+                                                  value,
+                                                )
+                                              } else {
+                                                change(
+                                                  `sale_details_attributes[${index}].price`,
+                                                  product.sale_price_inc_igv,
+                                                )
+                                                change(
+                                                  `sale_details_attributes[${index}].unit_of_measure_product_id`,
+                                                  undefined,
+                                                )
+                                              }
+                                            }}
+                                            validate={required()}
+                                          />
                                         </TableCell>
                                         <TableCell>
                                           {product.stock_quantity}

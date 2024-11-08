@@ -64,7 +64,11 @@ const ProductsTable = ({ productList, fields }) => {
         quantity: 1,
         product_id: product.id,
         price: product.sale_price_inc_igv,
+        initial_price: product.sale_price_inc_igv,
+        last_price: product.sale_price_inc_igv,
+        last_stock: product.stock_quantity + 1,
         composed_name: `${product.name} (${product.lote || ' - '})`,
+        unit_of_measure_product_value: 'unit',
         sub_total: 1 * product.sale_price_inc_igv,
         ...rest,
       })

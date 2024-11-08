@@ -32,6 +32,7 @@ const Login = () => {
                 className="block mt-1 w-full"
                 required
                 autoFocus
+                skipFormat
               />
 
               {/*<InputError messages={errors.email} className="mt-2" />*/}
@@ -47,6 +48,7 @@ const Login = () => {
                 className="block mt-1 w-full"
                 required
                 autoComplete="current-password"
+                skipFormat
               />
 
               {/*<InputError messages={errors.password} className="mt-2" />*/}

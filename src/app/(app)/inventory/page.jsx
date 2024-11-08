@@ -82,7 +82,7 @@ const Page = () => {
                         open: true,
                       })
 
-                      setTimeout(() => window.location.reload(), 3000)
+                      setTimeout(() => window.location.reload(), 2000)
                     })
                     .catch(() => {
                       setLoading(false)
@@ -236,7 +236,6 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           <Input
-                                            initialValue={product.location}
                                             name={`purchase_details_attributes[${index}].location`}
                                           />
                                         </TableCell>
@@ -248,9 +247,6 @@ const Page = () => {
                                         <TableCell>
                                           <LabelField
                                             name={`purchase_details_attributes[${index}].stock_quantity`}
-                                            initialValue={
-                                              product.stock_quantity
-                                            }
                                           />
                                         </TableCell>
                                         <TableCell>
@@ -279,23 +275,18 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell>
                                           <LabelField
-                                            initialValue={
-                                              product.stock_quantity + 1
-                                            }
                                             name={`purchase_details_attributes[${index}].last_stock`}
                                             validate={mix(lessThan(0))}
                                           />
                                         </TableCell>
                                         <TableCell>
                                           <LabelField
-                                            initialValue={product.price}
                                             name={`purchase_details_attributes[${index}].initial_price`}
                                           />
                                         </TableCell>
                                         <TableCell>
                                           <Input
                                             type="number"
-                                            initialValue={product.price}
                                             name={`purchase_details_attributes[${index}].last_price`}
                                             validate={mix(
                                               required(),

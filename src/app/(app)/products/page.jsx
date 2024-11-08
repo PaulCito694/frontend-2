@@ -6,17 +6,37 @@ import useProduct from '@/hooks/useProducts'
 import { Form } from 'react-final-form'
 import Input from '@/components/Input'
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   IconButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Button as MaterialButton,
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { generateProductsXLSX } from '@/utils/xlsx'
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
+import useUnitOfMeasures from '@/hooks/useUnitOfMeasure'
+import SelectField from '@/components/SelectField'
+import { FieldArray } from 'react-final-form-arrays'
+import arrayMutators from 'final-form-arrays'
+import AddIcon from '@mui/icons-material/Add'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import RemoveCircle from '@mui/icons-material/RemoveCircle'
+import {
+  isAlphanumeric,
+  isInteger,
+  isNumber,
+  lessThan,
+  mix,
+  required,
+} from '@/utils/validations'
+import { markForDestroyMutator } from '@/utils/mutators'
 
 const Page = () => {
   const {
@@ -27,6 +47,8 @@ const Page = () => {
     updateProductById,
   } = useProduct()
 
+  const { unitOfMeasureList } = useUnitOfMeasures()
+
   if (isLoading) return <div>Cargando prro...</div>
 
   return (
@@ -36,10 +58,23 @@ const Page = () => {
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
               <Form
-                onSubmit={values => {
-                  if (values['id']) {
-                    updateProductById(values)
-                  } else createProduct(values)
+                mutators={{
+                  markForDestroy: markForDestroyMutator,
+                  ...arrayMutators,
+                }}
+                onSubmit={(values, form) => {
+                  const service = values['id']
+                    ? updateProductById
+                    : createProduct
+
+                  service(values).then(() => {
+                    form.restart()
+                    form.reset()
+                    form.change(
+                      'unit_of_measure_products_attributes',
+                      undefined,
+                    )
+                  })
                 }}
                 render={({ handleSubmit, submitting, form: { reset } }) => (
                   <form className="mb-8" onSubmit={handleSubmit}>
@@ -125,6 +160,105 @@ const Page = () => {
                         type="checkbox"
                       />
                     </div>
+                    <FieldArray name="unit_of_measure_products_attributes">
+                      {({ fields }) => (
+                        <Accordion
+                          className="mb-4"
+                          expandIcon={<ExpandMoreIcon />}>
+                          <AccordionSummary sx={{ backgroundColor: '#edf2f7' }}>
+                            Presentaciones <ExpandMoreIcon />
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <MaterialButton
+                              onClick={() => fields.push()}
+                              variant="contained"
+                              endIcon={<AddIcon />}>
+                              Agregar
+                            </MaterialButton>
+                            <Table>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell sx={{ fontWeight: 800 }}>
+                                    Nombre
+                                  </TableCell>
+                                  <TableCell sx={{ fontWeight: 800 }}>
+                                    Unidad de medida
+                                  </TableCell>
+                                  <TableCell sx={{ fontWeight: 800 }}>
+                                    Precio de venta
+                                  </TableCell>
+                                  <TableCell sx={{ fontWeight: 800 }}>
+                                    Cantidad
+                                  </TableCell>
+                                  <TableCell sx={{ fontWeight: 800 }}>
+                                    Eliminar
+                                  </TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {fields.value ? (
+                                  fields.value
+                                    .filter(item => !item?._destroy)
+                                    .map((presentation, index) => (
+                                      <TableRow key={index} className="flex">
+                                        <TableCell>
+                                          <Input
+                                            name={`unit_of_measure_products_attributes[${index}].name`}
+                                            validate={mix(
+                                              required(),
+                                              isAlphanumeric(),
+                                            )}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
+                                          <SelectField
+                                            name={`unit_of_measure_products_attributes[${index}].unit_of_measure_id`}
+                                            data={unitOfMeasureList}
+                                            validate={mix(required())}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
+                                          <Input
+                                            type="number"
+                                            name={`unit_of_measure_products_attributes[${index}].price`}
+                                            validate={mix(
+                                              required(),
+                                              isNumber(),
+                                            )}
+                                          />
+                                        </TableCell>
+                                        <TableCell>
+                                          <Input
+                                            type="number"
+                                            name={`unit_of_measure_products_attributes[${index}].quantity`}
+                                            validate={mix(
+                                              required(),
+                                              isInteger(),
+                                              lessThan(1),
+                                            )}
+                                          />
+                                        </TableCell>
+                                        <TableCell width={50}>
+                                          <IconButton
+                                            onClick={() => {
+                                              fields.markForDestroy(index)
+                                              //fields.remove(index)
+                                            }}
+                                            sx={{ padding: 0 }}>
+                                            <RemoveCircle />
+                                          </IconButton>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))
+                                ) : (
+                                  <></>
+                                )}
+                              </TableBody>
+                            </Table>
+                          </AccordionDetails>
+                        </Accordion>
+                      )}
+                    </FieldArray>
                     <Button type="submit" disabled={submitting}>
                       Crear producto
                     </Button>
@@ -151,6 +285,7 @@ const Page = () => {
                             <TableCell align="center">
                               Ubicacion de Medicamento
                             </TableCell>
+                            <TableCell align="center">Presentaciones</TableCell>
                             <TableCell align="center" width={100}>
                               Peso
                             </TableCell>
@@ -203,6 +338,7 @@ const Page = () => {
                                 <TableCell>{product.name}</TableCell>
                                 <TableCell>{product.description}</TableCell>
                                 <TableCell>{product.expiration_date}</TableCell>
+                                <TableCell>Holi</TableCell>
                                 <TableCell>{product.location}</TableCell>
                                 <TableCell>{product.weight}</TableCell>
                                 <TableCell>{product.brand}</TableCell>

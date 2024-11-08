@@ -18,6 +18,7 @@ const TextFieldField = ({
   validate,
   initialValue,
   onChange,
+  skipFormat,
   ...props
 }) => {
   const classes = useStyles()
@@ -26,13 +27,14 @@ const TextFieldField = ({
     meta: { error, touched },
   } = useField(name, {
     validate,
-    initialValue,
+    initialValue: initialValue || '',
     format: value => {
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && !skipFormat) {
         return value.toUpperCase()
       }
       return value
     },
+    ...props,
   })
 
   return (
@@ -54,7 +56,6 @@ const TextFieldField = ({
         }}
         onChange={onChange && onChange(input.value)}
         {...input}
-        {...props}
       />
       {error && touched && <span className="text-red-500">{error}</span>}
     </div>

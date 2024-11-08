@@ -13,3 +13,13 @@ export const clearArrayMutator = ([name], state, { changeValue }) => {
     changeValue(state, `${name}[${index}]`, () => undefined)
   })
 }
+
+export const markForDestroyMutator = (args, state, { changeValue }) => {
+  const [field, index] = args
+  changeValue(state, field, (values = []) => {
+    const currentValue = values?.[index] || {}
+    return Object.assign([], values, {
+      [index]: { ...currentValue, _destroy: '1' },
+    })
+  })
+}
