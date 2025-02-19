@@ -8,11 +8,12 @@ import Button from '@/components/Button'
 import { clearMutator } from 'utils/mutators'
 import { Card, CardContent } from '@mui/material'
 import Link from 'next/link'
+import Loading from '@/app/Loading'
 
 const Page = () => {
   const { channelList, isLoading, handleCreateChannel } = useRooms()
 
-  if (isLoading) return <div>Cargando prro...</div>
+  if (isLoading) return <Loading />
 
   return (
     <>

@@ -17,7 +17,7 @@ const SelectField = ({ name, label, className, validate, data, onChange }) => {
             padding: '4px',
           },
         }}
-        className={clsx('font-bold min-w-25 p-0', className)}
+        className={clsx('font-bold min-w-25 p-0 bg-white', className)}
         {...input}
         onChange={e => {
           input.onChange(e.target.value)

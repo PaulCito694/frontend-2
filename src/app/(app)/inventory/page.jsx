@@ -42,6 +42,7 @@ import {
 } from '@/utils/validations'
 import ProductsDialog from '@/components/ProductsDialog'
 import SearchIcon from '@mui/icons-material/Search'
+import Loading from '@/app/Loading'
 
 const Page = () => {
   const { productList, isLoading } = useProducts()
@@ -57,7 +58,7 @@ const Page = () => {
     trigger()
   }, [])
 
-  if (isLoading) return <div>Cargando prro...</div>
+  if (isLoading) return <Loading />
 
   return (
     <>

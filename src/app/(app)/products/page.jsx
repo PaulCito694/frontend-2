@@ -37,6 +37,7 @@ import {
   required,
 } from '@/utils/validations'
 import { markForDestroyMutator } from '@/utils/mutators'
+import Loading from '@/app/Loading'
 
 const Page = () => {
   const {
@@ -49,7 +50,7 @@ const Page = () => {
 
   const { unitOfMeasureList } = useUnitOfMeasures()
 
-  if (isLoading) return <div>Cargando prro...</div>
+  if (isLoading) return <Loading />
 
   return (
     <div>

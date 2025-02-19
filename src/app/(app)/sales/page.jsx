@@ -28,6 +28,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom'
 import { generateSalesXLSX } from '@/utils/xlsx'
 import Button from '@/components/Button'
 import Pagination from '@/components/Pagination'
+import Loading from '@/app/Loading'
 
 const Page = () => {
   const { saleList, isMutating, trigger, cancel } = useSales()
@@ -39,7 +40,7 @@ const Page = () => {
     trigger()
   }, [])
 
-  if (isMutating) return <div>Cargando prro...</div>
+  if (isMutating) return <Loading />
 
   return (
     <>

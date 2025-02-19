@@ -10,6 +10,7 @@ const useProducts = () => {
   const { data: productList, isLoading, mutate } = useSWR(
     'api/products',
     getProductList,
+    { revalidateOnFocus: false, shouldRetryOnError: false },
   )
   const createProduct = async data => {
     try {
@@ -32,8 +33,8 @@ const useProducts = () => {
       .delete(`api/products/${id}`)
       .then(res => res.data)
 
-  const updateProductById = values => {
-    axios()
+  const updateProductById = async values => {
+    await axios()
       .put(`api/products/${values['id']}`, values)
       .then(res => res.data)
   }

@@ -48,7 +48,10 @@ const TextFieldField = ({
         </label>
       )}
       <TextField
-        className={clsx('border border-solid border-black p-0', className)}
+        className={clsx(
+          'border border-solid border-black p-0 bg-white',
+          className,
+        )}
         InputProps={{
           classes: {
             input: classes.customInput,

@@ -123,6 +123,11 @@ const Navigation = ({ user }) => {
               }>
               {/* Authentication */}
               <DropdownButton onClick={logout}>Cerrar sesion</DropdownButton>
+              {isAdmin && (
+                <DropdownButton>
+                  <Link href="/register">Registrar usuario</Link>
+                </DropdownButton>
+              )}
             </Dropdown>
           </div>
 

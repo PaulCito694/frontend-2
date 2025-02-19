@@ -132,7 +132,7 @@ export const generateInvoicePDF = sale => {
 }
 
 export const generateInvoiceTicket = sale => {
-  const totalHeight = 140 + sale.sale_details.length * 5
+  const totalHeight = 100 + sale.sale_details.length * 5
   const doc = new jsPDF({
     orientation: 'p',
     unit: 'mm',
@@ -165,14 +165,18 @@ export const generateInvoiceTicket = sale => {
   doc.text(`Importe`, 68, 65)
   doc.line(2, 67, 78, 67, 'DF')
   let startSaleDetailY = 70
-  let partialY = 0
+  let partialY = startSaleDetailY
   const YDif = 4
   sale.sale_details.map((sale_detail, index) => {
-    partialY = startSaleDetailY + index * YDif
+    const splitText = doc.splitTextToSize(
+      sale_detail.product?.name?.toString() || '',
+      45,
+    )
     doc.text(sale_detail.quantity?.toString() || ' - ', 2, partialY)
-    doc.text(sale_detail.product.name?.toString() || ' - ', 10, partialY)
+    doc.text(splitText, 10, partialY)
     doc.text(sale_detail.price?.toString() || ' - ', 58, partialY)
     doc.text(sale_detail.sub_total?.toString() || ' - ', 68, partialY)
+    partialY = startSaleDetailY + (splitText.length + index) * YDif
   })
   doc.line(2, partialY + 2, 78, partialY + 2)
   doc.setFontSize(9)
@@ -182,18 +186,17 @@ export const generateInvoiceTicket = sale => {
   doc.text(`Vuelto:`, 61, partialY + 20, { align: 'right' })
   doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 5)
   doc.text(`S/. ${sale.total?.toString()}` || '-', 64, partialY + 10)
-  doc.text(`S/. ${sale.received_amount?.toString() || '-'}`, 64, partialY + 15)
-  doc.text(`S/. ${sale.change_amount?.toString() || '-'}`, 64, partialY + 20)
+  doc.text(`S/. ${sale.received_money?.toString() || '-'}`, 64, partialY + 15)
+  doc.text(`S/. ${sale.change_money?.toString() || '-'}`, 64, partialY + 20)
   doc.line(2, partialY + 22, 78, partialY + 22)
   doc.setFontSize(7)
   doc.text(numberToLetters(sale.total)?.toString(), 2, partialY + 25)
-  doc.addImage('../qr.png', 'PNG', 20, partialY + 27, 40, 40)
   doc.line(2, partialY + 69, 78, partialY + 69)
   doc.output('pdfobjectnewwindow')
 }
 
 export const generateSalesResumeTicket = saleList => {
-  const totalHeight = 120 + saleList?.resume?.total_sale_details * 5
+  const totalHeight = 100 + saleList?.resume?.total_sale_details * 5
   const doc = new jsPDF({
     orientation: 'p',
     unit: 'mm',

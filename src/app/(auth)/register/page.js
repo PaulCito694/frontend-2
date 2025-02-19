@@ -1,114 +1,107 @@
 'use client'
 
 import Button from '@/components/Button'
-import InputError from '@/components/InputError'
-import Label from '@/components/Label'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
-import { useState } from 'react'
+import React from 'react'
+import { Form } from 'react-final-form'
+import {
+  isAlphanumeric,
+  isLetter,
+  mix,
+  required,
+  isInteger,
+  isEmail,
+} from '@/utils/validations'
+import Input from '@/components/Input'
+import { redirect } from 'next/navigation'
+import SelectField from '@/components/SelectField'
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
 
 const Page = () => {
-  const { register } = useAuth({
-    middleware: 'guest',
-    redirectIfAuthenticated: '/dashboard',
-  })
-
-  const [name] = useState('')
-  const [email] = useState('')
-  const [password] = useState('')
-  const [passwordConfirmation] = useState('')
-  const [errors, setErrors] = useState([])
-
-  const submitForm = event => {
-    event.preventDefault()
-
-    register({
-      name,
-      email,
-      password,
-      password_confirmation: passwordConfirmation,
-      setErrors,
-    })
-  }
+  const [loading, setLoading] = React.useState(false)
+  const { register } = useAuth()
 
   return (
-    <form onSubmit={submitForm}>
-      {/* Name */}
-      <div>
-        <Label htmlFor="name">Name</Label>
+    <>
+      <Form
+        onSubmit={values => {
+          setLoading(true)
+          register(values)
+            .then(() => redirect('/login'))
+            .finally(() => setLoading(false))
+        }}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <Input
+              name="name"
+              label={'Nombre'}
+              validate={mix(required(), isLetter())}
+            />
+            <Input
+              name="lastname"
+              label={'Apellido'}
+              validate={mix(required(), isLetter())}
+            />
+            <Input
+              name="password"
+              label={'Contrasena'}
+              validate={mix(required())}
+              type="password"
+            />
+            <Input
+              name="confirm_password"
+              label={'Confirmar contrasena'}
+              validate={(value, row) => {
+                return value !== row['password']
+                  ? 'Las contrasenas no coinciden.'
+                  : undefined
+              }}
+              type="password"
+            />
+            <SelectField
+              name="role"
+              label={'Rol en el sistema'}
+              data={[
+                { id: 'admin', name: 'Administrador' },
+                { id: 'seller', name: 'Vendedor' },
+                { id: 'finance', name: 'Contador' },
+              ]}
+            />
 
-        {/*<Input
-          id="name"
-          type="text"
-          value={name}
-          className="block mt-1 w-full"
-          onChange={event => setName(event.target.value)}
-          required
-          autoFocus
-        />*/}
+            <Accordion>
+              <AccordionSummary>Datos opcionales</AccordionSummary>
+              <AccordionDetails>
+                <Input
+                  name="codigo"
+                  label={'Codigo'}
+                  validate={mix(isAlphanumeric())}
+                />
+                <Input name="dni" label={'DNI'} validate={mix(isInteger())} />
 
-        <InputError messages={errors.name} className="mt-2" />
-      </div>
+                <Input name="email" label={'EMAIL'} validate={mix(isEmail())} />
 
-      {/* Email Address */}
-      <div className="mt-4">
-        <Label htmlFor="email">Email</Label>
+                <Input
+                  name="cellphone"
+                  label={'Celular'}
+                  validate={mix(isInteger())}
+                />
+              </AccordionDetails>
+            </Accordion>
 
-        {/*<Input
-          id="email"
-          type="email"
-          value={email}
-          className="block mt-1 w-full"
-          onChange={event => setEmail(event.target.value)}
-          required
-        />*/}
+            <Link
+              href="/login"
+              className="underline text-sm text-gray-600 hover:text-gray-900">
+              Ya estas registrado?
+            </Link>
 
-        <InputError messages={errors.email} className="mt-2" />
-      </div>
-
-      {/* Password */}
-      <div className="mt-4">
-        <Label htmlFor="password">Password</Label>
-
-        {/*<Input
-          id="password"
-          type="password"
-          value={password}
-          className="block mt-1 w-full"
-          onChange={event => setPassword(event.target.value)}
-          required
-          autoComplete="new-password"
-        />*/}
-
-        <InputError messages={errors.password} className="mt-2" />
-      </div>
-
-      {/* Confirm Password */}
-      <div className="mt-4">
-        <Label htmlFor="passwordConfirmation">Confirm Password</Label>
-
-        {/* <Input
-          id="passwordConfirmation"
-          type="password"
-          value={passwordConfirmation}
-          className="block mt-1 w-full"
-          onChange={event => setPasswordConfirmation(event.target.value)}
-          required
-        />*/}
-
-        <InputError messages={errors.password_confirmation} className="mt-2" />
-      </div>
-
-      <div className="flex items-center justify-end mt-4">
-        <Link
-          href="/login"
-          className="underline text-sm text-gray-600 hover:text-gray-900">
-          Already registered?
-        </Link>
-
-        <Button className="ml-4">Register</Button>
-      </div>
-    </form>
+            <Button type="submit" loading={loading}>
+              Registrar
+            </Button>
+          </form>
+        )}
+      />
+    </>
   )
 }
 

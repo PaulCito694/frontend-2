@@ -34,7 +34,7 @@ import useCustomers from '@/hooks/useCustomers'
 import CustomerFields from './components/CustomerField'
 import useIdentityType from '@/hooks/useIdentityType'
 import ProductsDialog from '@/components/ProductsDialog'
-import SearchIcon from '@mui/icons-material/Search'
+import Loading from '@/app/Loading'
 
 const Page = () => {
   const { isLoading: isCustomerLoading } = useCustomers()
@@ -46,10 +46,9 @@ const Page = () => {
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [showProductsDialog, setShowProductsDialog] = useState(false)
 
   if (isLoading || isCustomerLoading || isIdentityTypeLoading)
-    return <div>Cargando prro...</div>
+    return <Loading />
 
   return (
     <>
@@ -92,23 +91,11 @@ const Page = () => {
                     <FieldArray name="sale_details_attributes">
                       {({ fields, meta: { error } }) => (
                         <div className="flex flex-col justify-around items-start gap-4">
-                          {showProductsDialog && (
-                            <ProductsDialog
-                              productList={productList}
-                              fields={fields}
-                              handleClose={() => setShowProductsDialog(false)}
-                            />
-                          )}
-                          <div>
-                            <div className="flex gap-4">
-                              <h2 className="text-2xl mb-4">Nueva venta:</h2>
-                              <Button
-                                onClick={() => setShowProductsDialog(true)}>
-                                Seleccionar productos{' '}
-                                <SearchIcon className="ml-4" />
-                              </Button>
+                          <div className="w-full">
+                            <div className="flex flex-col gap-4">
+                              <h2 className="text-2xl mb-4">Nueva venta</h2>
                             </div>
-                            <Card>
+                            <Card className="gap-4">
                               <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
                                 <SelectField
                                   name="customer.identity_type_id"
@@ -161,6 +148,10 @@ const Page = () => {
                                   Guardar Venta
                                 </Button>
                               </div>
+                              <ProductsDialog
+                                productList={productList}
+                                fields={fields}
+                              />
                               <Table className="mb-8" size="small">
                                 <TableHead>
                                   <TableRow className="bg-blue-500">

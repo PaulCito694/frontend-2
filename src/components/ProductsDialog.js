@@ -1,32 +1,20 @@
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
 import React from 'react'
-import Button from '@/components/Button'
 import ProductsTable from '@/components/ProductsTable'
+import Search from '@mui/icons-material/Search'
 
-const ProductsDialog = ({ handleClose, productList, fields }) => {
+const ProductsDialog = ({ productList, fields }) => {
   return (
-    <Dialog
-      fullWidth
-      maxWidth="xl"
-      open
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">
-        Seleccione los productos que desee ingresar a la venta
-      </DialogTitle>
-      <DialogContent>
-        <ProductsTable productList={productList} fields={fields} />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cerrar</Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Accordion style={{ backgroundColor: '#c4b5fd', marginBottom: '1rem' }}>
+        <AccordionSummary>
+          Buscar productos <Search />
+        </AccordionSummary>
+        <AccordionDetails>
+          <ProductsTable productList={productList} fields={fields} />
+        </AccordionDetails>
+      </Accordion>
+    </>
   )
 }
 

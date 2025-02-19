@@ -31,6 +31,7 @@ const ProductsTable = ({ productList, fields }) => {
           )
           .slice(0, rowsPerPage),
       )
+    else setFilteredProducts(productList.slice(0, rowsPerPage))
   }, [searchNameOrComponent])
 
   useEffect(() => {
@@ -42,6 +43,7 @@ const ProductsTable = ({ productList, fields }) => {
           )
           .slice(0, rowsPerPage),
       )
+    else setFilteredProducts(productList.slice(0, rowsPerPage))
   }, [searchBarCode])
 
   useEffect(() => {
@@ -76,12 +78,11 @@ const ProductsTable = ({ productList, fields }) => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <h2 className="text-2xl mb-4">Listado de productos:</h2>
-      <div className="flex justify-between gap-4">
+    <div className="h-72 flex justify-between gap-4">
+      <div className="flex flex-col gap-4">
         <Input
           name="codeSearch"
-          label="Buscar por nombre o componente"
+          label="Buscar por nombre"
           onChange={setSearchNameOrComponent}
           parentClassName="mb-4 w-full"
         />
@@ -92,30 +93,51 @@ const ProductsTable = ({ productList, fields }) => {
           parentClassName="mb-4 w-full"
         />
       </div>
-      <Card>
-        <Table size="small">
+      <Card className="w-full" style={{ overflowY: 'auto' }}>
+        <Table stickyHeader size="small">
           <TableHead>
-            <TableRow className="bg-violet-500">
-              <TableCell sx={{ width: 350, fontWeight: 800 }}>Nombre</TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+            <TableRow>
+              <TableCell
+                sx={{
+                  width: 350,
+                  fontWeight: 800,
+                  backgroundColor: '#8b5cf6',
+                }}>
+                Nombre
+              </TableCell>
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Precio
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Stock
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Lote
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Componente
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 F. V.
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Ubicacion
               </TableCell>
-              <TableCell sx={{ fontWeight: 800 }} align="right">
+              <TableCell
+                sx={{ fontWeight: 800, backgroundColor: '#8b5cf6' }}
+                align="right">
                 Laboratorio
               </TableCell>
             </TableRow>

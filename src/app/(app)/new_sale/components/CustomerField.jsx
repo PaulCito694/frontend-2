@@ -11,7 +11,6 @@ const CustomerFields = () => {
   useEffect(() => {
     if (Number(dni.value.length) === 8) {
       const foundCustomer = findCustomerByDni(dni.value)
-      console.log(foundCustomer)
       if (foundCustomer && foundCustomer.customer_id) {
         mutators.change(
           'customer.person_attributes.email',

@@ -4,6 +4,7 @@ import React from 'react'
 import Header from '@/app/(app)/Header'
 import useRooms from '@/hooks/useRooms'
 import { Card, CardContent, CardHeader } from '@mui/material'
+import Loading from '@/app/Loading'
 require('../../echo')
 
 const Page = ({ params }) => {
@@ -11,7 +12,7 @@ const Page = ({ params }) => {
   const { data: room, isLoading } = getRoomById(params.id)
   const values = [1, 2, 3, 5, 8, 13]
 
-  if (isLoading) return <div>Cargando prro...</div>
+  if (isLoading) return <Loading />
 
   return (
     <>
