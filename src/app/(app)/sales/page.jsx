@@ -70,7 +70,8 @@ const Page = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow className="bg-yellow-500">
-                    <TableCell sx={{ fontWeight: 800 }}>Comprobante</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Nº</TableCell>
+                    <TableCell sx={{ fontWeight: 800 }}>Serie</TableCell>
                     <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                       Fecha
                     </TableCell>
@@ -111,6 +112,7 @@ const Page = () => {
                             border: 0,
                           },
                         }}>
+                        <TableCell align="left">{index + 1}</TableCell>
                         <TableCell component="th" scope="row">
                           {sale.invoice}
                         </TableCell>
