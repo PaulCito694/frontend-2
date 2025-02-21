@@ -101,7 +101,7 @@ const Page = () => {
                   </TableHead>
                   <TableBody>
                     {saleList?.results?.map((sale, index) =>
-                      sale.sale_details?.map(detail => (
+                      sale.sale_details?.map((detail, detailIndex) => (
                         <TableRow
                           className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
                           key={index}
@@ -110,7 +110,7 @@ const Page = () => {
                               border: 0,
                             },
                           }}>
-                          <TableCell align="left">{index + 1}</TableCell>
+                          <TableCell align="left">{detailIndex + 1}</TableCell>
                           <TableCell align="left">
                             {detail.product.code}
                           </TableCell>
