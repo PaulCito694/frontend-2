@@ -2,11 +2,14 @@ import { useField, useForm } from 'react-final-form'
 import React, { useEffect } from 'react'
 import Input from '@/components/Input'
 import useCustomers from '@/hooks/useCustomers'
+import SelectField from '@/components/SelectField'
+import useIdentityType from '@/hooks/useIdentityType'
 
 const CustomerFields = () => {
   const { findCustomerByDni, findAsyncCustomer } = useCustomers()
   const { mutators } = useForm()
   const { input: dni } = useField('customer.person_attributes.dni')
+  const { identityTypeList } = useIdentityType()
 
   useEffect(() => {
     if (Number(dni.value.length) === 8) {
@@ -48,6 +51,12 @@ const CustomerFields = () => {
 
   return (
     <span className="bg-green-300 p-2 mb-4 flex gap-4">
+      <SelectField
+        name="customer.identity_type_id"
+        label={'Tipo de identidad'}
+        data={identityTypeList}
+      />
+      <Input name="customer.person_attributes.dni" label={'Nro de documento'} />
       <Input parentClassName="hidden" name="customer.id" label={'id'} />
       <Input
         parentClassName="hidden"

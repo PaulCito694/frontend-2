@@ -58,6 +58,7 @@ const TextFieldField = ({
           },
         }}
         onChange={onChange && onChange(input.value)}
+        {...props}
         {...input}
       />
       {error && touched && <span className="text-red-500">{error}</span>}

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import { Form } from 'react-final-form'
-import Button from '@/components/Button'
 import { changeMutator, clearMutator } from 'utils/mutators'
 import {
+  Button,
   Card,
   IconButton,
   Table,
@@ -32,23 +32,18 @@ import {
 } from '@/utils/validations'
 import useCustomers from '@/hooks/useCustomers'
 import CustomerFields from './components/CustomerField'
-import useIdentityType from '@/hooks/useIdentityType'
 import ProductsDialog from '@/components/ProductsDialog'
 import Loading from '@/app/Loading'
 
 const Page = () => {
   const { isLoading: isCustomerLoading } = useCustomers()
-  const {
-    identityTypeList,
-    isLoading: isIdentityTypeLoading,
-  } = useIdentityType()
   const { productList, isLoading } = useProducts()
   const { createSale } = useSales()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [showCustomerFields, setShowCustomerFields] = useState(false)
 
-  if (isLoading || isCustomerLoading || isIdentityTypeLoading)
-    return <Loading />
+  if (isLoading || isCustomerLoading) return <Loading />
 
   return (
     <>
@@ -96,58 +91,6 @@ const Page = () => {
                               <h2 className="text-2xl mb-4">Nueva venta</h2>
                             </div>
                             <Card className="gap-4">
-                              <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
-                                <SelectField
-                                  name="customer.identity_type_id"
-                                  label={'Tipo de identidad'}
-                                  data={identityTypeList}
-                                />
-                                <Input
-                                  name="customer.person_attributes.dni"
-                                  label={'Nro de documento'}
-                                />
-                                <CustomerFields />
-                                <SelectField
-                                  name="state"
-                                  label="Estado de pago"
-                                  data={[
-                                    {
-                                      id: 'payed',
-                                      name: 'Pagado',
-                                    },
-                                    {
-                                      id: 'pending_payment',
-                                      name: 'Pendiente de pago',
-                                    },
-                                  ]}
-                                  validate={mix(required())}
-                                />
-                                <SelectField
-                                  name="kind"
-                                  label="Tipo de venta"
-                                  data={[
-                                    {
-                                      id: 'sales_note',
-                                      name: 'Nota de venta',
-                                    },
-                                    {
-                                      id: 'receipt',
-                                      name: 'Boleta',
-                                    },
-                                    {
-                                      id: 'invoice',
-                                      name: 'Factura',
-                                    },
-                                  ]}
-                                  validate={mix(required())}
-                                />
-                                <Button
-                                  type="submit"
-                                  loading={loading}
-                                  className="relative">
-                                  Guardar Venta
-                                </Button>
-                              </div>
                               <ProductsDialog
                                 productList={productList}
                                 fields={fields}
@@ -284,8 +227,26 @@ const Page = () => {
                                         </TableCell>
                                         <TableCell width={100}>
                                           <Input
-                                            disabled
                                             name={`sale_details_attributes[${index}].sub_total`}
+                                            InputProps={{
+                                              readOnly: true,
+                                              classes: {
+                                                input: {
+                                                  padding: '4px !important',
+                                                },
+                                              },
+                                              sx: {
+                                                color: 'blue',
+                                                fontWeight: 900,
+                                                backgroundColor: '#f5f5f5',
+                                                padding: 0,
+                                              },
+                                            }}
+                                            inputProps={{
+                                              style: {
+                                                padding: '4px',
+                                              },
+                                            }}
                                           />
                                         </TableCell>
                                         <TableCell width={50}>
@@ -311,10 +272,27 @@ const Page = () => {
                                   )}
                                 </TableBody>
                               </Table>
-                              {!Array.isArray(error) && (
-                                <span className="text-red-500">{error}</span>
+                              <div className="flex flex-col gap-4 mb-4">
+                                {!Array.isArray(error) && (
+                                  <span className="text-red-500">{error}</span>
+                                )}
+
+                                <Button
+                                  variant="contained"
+                                  onClick={() =>
+                                    setShowCustomerFields(!showCustomerFields)
+                                  }
+                                  className="max-w-lg">
+                                  Mostrar datos del cliente
+                                </Button>
+                              </div>
+
+                              {showCustomerFields && (
+                                <div className="flex flex-row bg-amber-200 mb-8 gap-4 justify-between p-4 items-center">
+                                  <CustomerFields />
+                                </div>
                               )}
-                              <TotalField />
+                              <TotalField loading={loading} />
                             </Card>
                           </div>
                         </div>

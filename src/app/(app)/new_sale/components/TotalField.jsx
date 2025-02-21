@@ -1,9 +1,11 @@
 import { useField, useForm } from 'react-final-form'
 import React, { useEffect } from 'react'
 import Input from '@/components/Input'
-import { isNumber, mix } from '@/utils/validations'
+import { isNumber, mix, required } from '@/utils/validations'
+import SelectField from '@/components/SelectField'
+import Button from '@/components/Button'
 
-const TotalField = () => {
+const TotalField = ({ loading }) => {
   let total = 0
   const { input } = useField('sale_details_attributes')
   const { input: receivedMoney } = useField('received_money')
@@ -39,13 +41,97 @@ const TotalField = () => {
 
   return (
     <span className="bg-green-300 p-2 mb-4 flex gap-4">
-      <Input name={'total'} value={total} label="Venta en total" disabled />
+      <Input
+        name={'total'}
+        value={total}
+        label="Venta en total"
+        InputProps={{
+          readOnly: true,
+          sx: {
+            color: 'blue',
+            fontWeight: 900,
+            backgroundColor: '#f5f5f5',
+          },
+        }}
+        inputProps={{
+          style: {
+            fontSize: '30px',
+            padding: '4px',
+          },
+        }}
+      />
       <Input
         name={'received_money'}
         label="Dinero recibido"
         validate={mix(isNumber())}
+        InputProps={{
+          sx: {
+            fontWeight: 900,
+            backgroundColor: '#f5f5f5',
+          },
+        }}
+        inputProps={{
+          style: {
+            fontSize: '30px',
+            padding: '4px',
+          },
+        }}
       />
-      <Input name={'change_money'} label="Vuelto" disabled />
+      <Input
+        name={'change_money'}
+        label="Vuelto"
+        InputProps={{
+          readOnly: true,
+          sx: {
+            color: 'blue',
+            fontWeight: 900,
+            backgroundColor: '#f5f5f5',
+          },
+        }}
+        inputProps={{
+          style: {
+            fontSize: '30px',
+            padding: '4px',
+          },
+        }}
+      />
+      <SelectField
+        name="kind"
+        label="Tipo de venta"
+        data={[
+          {
+            id: 'sales_note',
+            name: 'Nota de venta',
+          },
+          {
+            id: 'receipt',
+            name: 'Boleta',
+          },
+          {
+            id: 'invoice',
+            name: 'Factura',
+          },
+        ]}
+        validate={mix(required())}
+      />
+      <SelectField
+        name="state"
+        label="Estado de pago"
+        data={[
+          {
+            id: 'payed',
+            name: 'Pagado',
+          },
+          {
+            id: 'pending_payment',
+            name: 'Pendiente de pago',
+          },
+        ]}
+        validate={mix(required())}
+      />
+      <Button type="submit" loading={loading} className="relative">
+        Guardar Venta
+      </Button>
     </span>
   )
 }
