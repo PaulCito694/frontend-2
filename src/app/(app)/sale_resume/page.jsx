@@ -86,6 +86,7 @@ const Page = () => {
                 <Table size="small" className="mb-8">
                   <TableHead>
                     <TableRow className="bg-yellow-500">
+                      <TableCell sx={{ fontWeight: 800 }}>Nº</TableCell>
                       <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                         Codigo
                       </TableCell>
@@ -109,6 +110,7 @@ const Page = () => {
                               border: 0,
                             },
                           }}>
+                          <TableCell align="left">{index + 1}</TableCell>
                           <TableCell align="left">
                             {detail.product.code}
                           </TableCell>
