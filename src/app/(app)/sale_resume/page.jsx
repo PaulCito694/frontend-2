@@ -86,7 +86,9 @@ const Page = () => {
                 <Table size="small" className="mb-8">
                   <TableHead>
                     <TableRow className="bg-yellow-500">
-                      <TableCell sx={{ fontWeight: 800 }}>Nº</TableCell>
+                      <TableCell sx={{ fontWeight: 800 }}>
+                        Nº de venta
+                      </TableCell>
                       <TableCell sx={{ minWidth: 300, fontWeight: 800 }}>
                         Codigo
                       </TableCell>
@@ -101,7 +103,7 @@ const Page = () => {
                   </TableHead>
                   <TableBody>
                     {saleList?.results?.map((sale, index) =>
-                      sale.sale_details?.map((detail, detailIndex) => (
+                      sale.sale_details?.map(detail => (
                         <TableRow
                           className="hover:bg-yellow-200 active:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300"
                           key={index}
@@ -110,7 +112,7 @@ const Page = () => {
                               border: 0,
                             },
                           }}>
-                          <TableCell align="left">{detailIndex + 1}</TableCell>
+                          <TableCell align="left">{index + 1}</TableCell>
                           <TableCell align="left">
                             {detail.product.code}
                           </TableCell>
